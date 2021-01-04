@@ -1,3 +1,5 @@
+package com.peijun;
+
 /**
  * @author: Kwok Simon GSGB
  * @date: 2020/7/6 19:18
@@ -258,10 +260,10 @@ public class DoubleLinkedList<E> {
 
     public static void main(String[] args) {
         DoubleLinkedList<Student> list = new DoubleLinkedList<>();
-//        list.addLast(new Student("夏侯惇", "男", 35));
-//        list.addLast(new Student("张辽", "男", 30));
-//        list.addLast(new Student("徐晃", "男", 28));
-//        list.addLast(new Student("许褚", "男", 25));
+//        list.addLast(new com.peijun.Student("夏侯惇", "男", 35));
+//        list.addLast(new com.peijun.Student("张辽", "男", 30));
+//        list.addLast(new com.peijun.Student("徐晃", "男", 28));
+//        list.addLast(new com.peijun.Student("许褚", "男", 25));
 
         list.addFirst(new Student("夏侯惇", "男", 35));
         list.addFirst(new Student("张辽", "男", 30));
@@ -276,10 +278,10 @@ public class DoubleLinkedList<E> {
 //        System.out.println("=========");
 //        System.out.println(list.toString());
 
-//        list.set(1,new Student("张辽", "男", 90));
+//        list.set(1,new com.peijun.Student("张辽", "男", 90));
 //        System.out.println(list.toString());
 //
 //        System.out.println("==========");
-//        System.out.println(list.get(new Student("许褚", "男", 25)));
+//        System.out.println(list.get(new com.peijun.Student("许褚", "男", 25)));
     }
 }

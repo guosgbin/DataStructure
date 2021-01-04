@@ -1,4 +1,4 @@
-package stack;
+package com.peijun.stack;
 
 import java.util.EmptyStackException;
 

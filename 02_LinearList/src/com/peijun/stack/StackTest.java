@@ -1,4 +1,4 @@
-package stack;
+package com.peijun.stack;
 
 /**
  * @author: Dylan Kwok GSGB
@@ -18,8 +18,8 @@ public class StackTest {
     private static void testLinkedStack() {
         LinkedStack<String> stack = new LinkedStack<>();
         System.out.println(stack.isEmpty());
-//        stack.peek();
-//        stack.pop();
+//        com.peijun.stack.peek();
+//        com.peijun.stack.pop();
         System.out.println(stack);
 
         stack.push("你好");
@@ -40,8 +40,8 @@ public class StackTest {
 
         System.out.println(stack.isEmpty());
         System.out.println(stack.isFull());
-//        System.out.println(stack.peek());
-//        System.out.println(stack.pop());
+//        System.out.println(com.peijun.stack.peek());
+//        System.out.println(com.peijun.stack.pop());
 
         System.out.println("============");
         stack.push(1);

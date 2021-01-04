@@ -1,6 +1,5 @@
-import sun.misc.Cleaner;
+package com.peijun;
 
-import javax.sound.midi.Soundbank;
 import java.util.Objects;
 
 /**
@@ -372,21 +371,21 @@ public class SingleLinkedList<E> {
 //        System.out.println(list.isEmpty());
 //        System.out.println(list.size());
 //        System.out.println(list.toString());
-//        System.out.println(list.get(new Student("徐晃", "男", 28)));
+//        System.out.println(list.get(new com.peijun.Student("徐晃", "男", 28)));
         System.out.println(list);
         System.out.println("===");
-//        list.add(4, new Student("夏侯霸", "男", 25));
+//        list.add(4, new com.peijun.Student("夏侯霸", "男", 25));
         System.out.println(list.remove(null));
         System.out.println(list);
 
 //        System.out.println("============");
 //
-//        list.addFirst(new Student("曹爽", "男", 10));
+//        list.addFirst(new com.peijun.Student("曹爽", "男", 10));
 //        System.out.println(list.size());
 //        System.out.println(list.toString());
 //        System.out.println("============");
 //
-//        list.add(2, new Student("甄姬", "女", 20));
+//        list.add(2, new com.peijun.Student("甄姬", "女", 20));
 //        System.out.println(list.size());
 //        System.out.println(list.toString());
 //        System.out.println("============");
@@ -396,12 +395,12 @@ public class SingleLinkedList<E> {
 //        System.out.println(list.toString());
 //        System.out.println("============");
 //
-//        System.out.println("删除节点是否成功：" + list.remove(new Student("张辽", "男", 30)));
+//        System.out.println("删除节点是否成功：" + list.remove(new com.peijun.Student("张辽", "男", 30)));
 //        System.out.println(list.size());
 //        System.out.println(list.toString());
 //        System.out.println("============");
 //
-//        System.out.println("修改前的元素：" + list.set(1, new Student("邢道荣", "男", 30)));
+//        System.out.println("修改前的元素：" + list.set(1, new com.peijun.Student("邢道荣", "男", 30)));
 //        System.out.println("索引1处的元素为："+list.get(1));
 //        System.out.println(list.size());
 //        System.out.println(list.toString());

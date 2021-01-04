@@ -1,6 +1,4 @@
-package queue;
-
-import stack.ArrayStack;
+package com.peijun.queue;
 
 /**
  * @author: Dylan Kwok GSGB
@@ -81,9 +79,9 @@ public class QueueTest {
     private static void testLinkedQueue() {
         LinkedQueue<String> queue = new LinkedQueue<>();
 
-//        System.out.println(queue.isEmpty());
-//        System.out.println(queue.peek());
-//        System.out.println(queue.size());
+//        System.out.println(com.peijun.queue.isEmpty());
+//        System.out.println(com.peijun.queue.peek());
+//        System.out.println(com.peijun.queue.size());
 
         System.out.println(queue.offer("你"));
         System.out.println(queue.offer("是"));

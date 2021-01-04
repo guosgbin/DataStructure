@@ -1,4 +1,4 @@
-package stack;
+package com.peijun.stack;
 
 /**
  * @author: Dylan Kwok GSGB
@@ -65,7 +65,7 @@ public class ArrayStack<E> {
     public E push(E element) {
         // 判断栈是否满
         if (isFull()) {
-            throw new RuntimeException("stack is full");
+            throw new RuntimeException("com.peijun.stack is full");
         }
         stack[++top] = element;
         return element;
@@ -77,7 +77,7 @@ public class ArrayStack<E> {
     public E pop() {
         // 判断栈是否有元素
         if (isEmpty()) {
-            throw new RuntimeException("stack is empty");
+            throw new RuntimeException("com.peijun.stack is empty");
         }
         E oldValue = (E) stack[top];
         stack[top] = null;
@@ -91,7 +91,7 @@ public class ArrayStack<E> {
     public E peek() {
         // 判断栈是否有元素
         if (isEmpty()) {
-            throw new RuntimeException("stack is empty");
+            throw new RuntimeException("com.peijun.stack is empty");
         }
         return (E) stack[top];
     }

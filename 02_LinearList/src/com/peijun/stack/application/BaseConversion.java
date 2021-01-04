@@ -1,4 +1,4 @@
-package stack.application;
+package com.peijun.stack.application;
 
 import java.util.Stack;
 
