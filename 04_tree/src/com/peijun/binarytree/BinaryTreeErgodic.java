@@ -1,5 +1,7 @@
 package com.peijun.binarytree;
 
+import java.util.Arrays;
+
 /**
  * @author: Dylan kwok GSGB
  * @date: 2021/1/4 21:17
@@ -11,9 +13,9 @@ package com.peijun.binarytree;
 public class BinaryTreeErgodic {
     public static void main(String[] args) {
         // 手动创建一个二叉树
-        BinaryTree<String> binaryTree = initBinaryTree();
+//        BinaryTree<String> binaryTree = initBinaryTree();
 
-        /* ------ 开始测试 ------*/
+        /* ------ 开始测试 遍历 ------*/
 
         // 前序遍历
 //        binaryTree.preOrder();
@@ -22,8 +24,27 @@ public class BinaryTreeErgodic {
         // 后序遍历
 //        binaryTree.postOrder();
         // 层次遍历
-        binaryTree.levelOrder();
+//        binaryTree.levelOrder();
 
+        /* ------ 开始测试 创建 ------*/
+//        BinaryTree binaryTree = new BinaryTree();
+//        binaryTree.createBinaryTree("A,B,D,#,#,E,#,#,C,F,#,#");
+//        binaryTree.createBinaryTree("1_曹操,2_曹丕,4_曹睿,#,7_曹芳,#,#,5_曹协,#,#,3_曹植,#,6_曹志,#,#");
+        // 前序遍历创建的二叉树试下
+//        binaryTree.preOrder();
+//        binaryTree.inOrder();
+//        // 后序遍历
+//        binaryTree.postOrder();
+//        // 层次遍历
+//        binaryTree.levelOrder();
+
+        /* ------ 开始测试 非递归遍历 ------*/
+        BinaryTree<String> binaryTree = initBinaryTree();
+        binaryTree.preOrder();
+        System.out.println("=====");
+        binaryTree.preOrderStack();
+        System.out.println("=====");
+        binaryTree.preOrderStack2();
 
     }
 

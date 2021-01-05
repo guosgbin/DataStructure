@@ -1,6 +1,7 @@
 package com.peijun.binarytree;
 
-import java.util.ArrayDeque;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: Dylan kwok GSGB
@@ -9,6 +10,13 @@ import java.util.ArrayDeque;
  * 古之立大事者，不惟有超世之才，亦必有坚忍不拔之志——苏轼
  * <p>
  * 二叉树对象
+ *
+ * 成员方法：
+ *      前序遍历 递归和非递归
+ *      中序遍历 递归和非递归
+ *      后序遍历 递归和非递归
+ *      层次遍历
+ *      创建二叉树
  */
 public class BinaryTree<E> {
     /**
@@ -137,6 +145,201 @@ public class BinaryTree<E> {
                 deque.offer(right);
             }
         }
+    }
+
+    /**
+     * 创建二叉树 默认是字符串等基本类型
+     *
+     * 输入一个 补空二叉树 的前序序列 来创建二叉树
+     */
+    public void createBinaryTree(String preOrderStr) {
+        // 创建一个扫描对象
+        String[] split = preOrderStr.split(",");
+        List<String> preOrderList = Arrays.stream(split).collect(Collectors.toList());
+        Iterator<String> it = preOrderList.iterator();
+        this.root = createBinaryTree(it);
+    }
+
+    private TreeNode<E> createBinaryTree(Iterator<String> it) {
+        if (!it.hasNext()) {
+            return null;
+        }
+        String temp = it.next();
+        if (Objects.equals(temp, "#")) {
+            return null;
+        }
+        // 生成父节点
+        TreeNode<E> node = new TreeNode<>((E)temp); // 针对基本数据类型类转换的
+        // 生成左子树
+        node.setLeft(createBinaryTree(it));
+        // 生成右子树
+        node.setRight(createBinaryTree(it));
+        return node;
+    }
+
+
+    /**
+     * 非递归前序遍历 方法1
+     */
+    public void preOrderStack() {
+        Stack<TreeNode<E>> stack = new Stack<TreeNode<E>>();
+        TreeNode<E> node = root;
+        while(node != null || !stack.isEmpty()){
+            // 内循环条件 父节点不为null 第一次进入是根节点
+            // 这个循环是判断某个结点的左子结点或右子结点是否为空，为空的时就退出内循环
+            // 先判断左子结点是否为空，为空则判断右子结点是否为空
+            // 都为空，则弹栈，表明这个元素遍历完毕。
+            while(node != null){
+                System.out.println(node); // 前序遍历 先打印父节点
+                stack.push(node); // 父节点压栈
+                node = node.getLeft(); // 获取左子结点
+            }
+            node = stack.pop(); // 弹栈是因为没找到当前结点的左子结点，来找当前结点的右子结点
+            node = node.getRight(); // 获取右子结点
+        }
+    }
+
+    /**
+     * 非递归前序遍历
+     * 1.首先将root压栈；
+     * 2.每次从堆栈中弹出栈顶元素，表示当前访问的元素，对其进行打印；
+     * 3.依次判断其右子树，左子树是否非空，并进行压栈操作，至于为什么先压栈右子树，因为先压栈的后弹出，左子树需要先访问，因此后压栈；
+     */
+    public void preOrderStack2() {
+        if(root == null) {
+            return;
+        }
+
+        Stack<TreeNode<E>> stack = new Stack<>();
+        stack.push(root); // 首先将根结点压栈
+
+        while(!stack.isEmpty()) {
+            TreeNode<E> current = stack.pop();
+            System.out.println(current); // 打印弹栈元素
+
+            if(current.right != null) {
+                // 先右子结点压栈，后打印
+                stack.push(current.right);
+            }
+
+            if(current.left != null) {
+                // 左子结点压栈
+                stack.push(current.left);
+            }
+        }
+    }
+
+    /**
+     * 非递归中序遍历
+     */
+    public void inOrderStack() {
+        // TODO 未验证
+        Stack<TreeNode<E>> stack = new Stack<TreeNode<E>>();
+        TreeNode<E> node = root;
+        while(node != null || !stack.isEmpty()){
+            while(node != null){
+                stack.push(node);
+                node = node.getLeft();
+            }
+            node = stack.pop();
+            System.out.println(node);
+            node = node.getRight();
+        }
+    }
+
+    /**
+     * 非递归中序遍历 2
+     */
+    public void inOrderStack2() {
+        // TODO 未验证
+        if(root == null) {
+            return;
+        }
+
+        Stack<TreeNode> stack = new Stack<>();
+
+        TreeNode p = root;
+        while(p != null || !stack.isEmpty()) {
+            if(p != null) {
+                stack.push(p);
+                p = p.left;
+            } else {
+                p = stack.pop();
+                System.out.println(p);
+                p = p.right;
+            }
+        }
+    }
+
+
+    /**
+     * 非递归后序遍历
+     */
+    public void postOrderStack(){
+        // TODO 未验证
+//        Stack<TreeNode<E>> stack = new Stack<TreeNode<E>>();
+//        TreeNode<E> node = root;
+//        TreeNode<E> preNode = null;   //记录之前遍历的右结点
+//        while(node != null || !stack.isEmpty()){
+//            while(node != null){
+//                stack.push(node);
+//                node = node.getLeft();
+//            }
+//            node = stack.getTop();
+//
+//            /**如果右结点为空，或者右结点之前遍历过，打印根结点*/
+//            if(node.getRight() == null || node.getRight() == preNode){
+//                System.out.println(node.getValue());
+//                node = stack.pop();
+//                preNode = node;
+//                node = null;
+//            }
+//            else{
+//                node = node.getRight();
+//            }
+//        }
+    }
+
+    /**
+     * 非递归后序遍历2
+     */
+    public void postOrderStack2(){
+        // TODO 未验证
+//        List<Integer> res = new ArrayList<>();
+//        if(root == null) {
+//            return res;
+//        }
+//
+//        Stack<TreeNode> stack = new Stack<>();
+//
+//        TreeNode p = root;
+//
+//        // 标记最近出栈的节点，用于判断是否是p节点的右孩子，如果是的话，就可以访问p节点
+//        TreeNode pre = p;
+//
+//        while(p != null || !stack.isEmpty()) {
+//            if(p != null) {
+//
+//                stack.push(p);
+//                p = p.left;
+//
+//            } else {
+//                p = stack.pop();
+//
+//                if(p.right == null || p.right == pre) {
+//                    res.add(p.val);
+//                    pre = cur;
+//                    p = null;
+//                } else {
+//                    stack.push(p);
+//                    p = p.right;
+//                    stack.push(p);
+//                    p = p.left;
+//                }
+//            }
+//        }
+//
+//        return res;
     }
 
     public TreeNode<E> getRoot() {
