@@ -46,6 +46,19 @@ public class BinaryTreeErgodic {
         System.out.println("=====");
         binaryTree.preOrderStack2();
 
+//        binaryTree.inOrder();
+//        System.out.println("=====");
+//        binaryTree.inOrderStack();
+//        System.out.println("=====");
+//        binaryTree.inOrderStack2();
+
+//        binaryTree.postOrder();
+//        System.out.println("=====");
+//
+//        binaryTree.postOrderStack();
+//        System.out.println("=====");
+//        binaryTree.postOrderStack2();
+
     }
 
     /**
@@ -75,7 +88,7 @@ public class BinaryTreeErgodic {
         root.setRight(node3);
         node2.setLeft(node4);
         node2.setRight(node5);
-        node3.setLeft(node6);
+        node3.setRight(node6);
         node4.setRight(node7);
         binaryTree.setRoot(root);
         return binaryTree;
