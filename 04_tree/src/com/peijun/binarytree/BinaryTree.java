@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
  *      创建二叉树 √
  *      二叉树的深度 √
  *      二叉树总结点个数 √
- *      二叉树叶子结点个数 √ 打印叶子结点
- *      二叉树度为1结点个数  打印度为1的节点
+ *      二叉树叶子结点个数 √ 打印叶子结点 √
+ *      二叉树度为1结点个数 √  打印度为1的节点 √
  *      输出二叉树中从每个叶子结点到根结点的路径
  *      二叉树第k层的结点个数
  *      第k层上叶子结点的个数
@@ -408,6 +408,117 @@ public class BinaryTree<E> {
         printLeafNode(node.getLeft());
         printLeafNode(node.getRight());
     }
+
+    /**
+     * 度为1结点的个数
+     */
+    public Integer onlyOneSubNodeCount(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        if ((node.getLeft() != null && node.getRight() == null)
+                || (node.getLeft() == null && node.getRight() != null)){
+            // 加1之后 继续向下寻找是否有叶子结点
+            return 1 + onlyOneSubNodeCount(node.getLeft()) + onlyOneSubNodeCount(node.getRight());
+        }
+        return onlyOneSubNodeCount(node.getLeft()) + onlyOneSubNodeCount(node.getRight());
+    }
+
+    /**
+     * 打印度为1的结点
+     */
+    public void printOnlyOneSubNode(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        if ((node.getLeft() != null && node.getRight() == null)
+                || (node.getLeft() == null && node.getRight() != null)){
+            // 继续向下寻找是否有度为1的结点
+            System.out.print(node);
+        }
+        printOnlyOneSubNode(node.getLeft());
+        printOnlyOneSubNode(node.getRight());
+    }
+
+    /**
+     * 输出二叉树中从每个叶子结点到根结点的路径
+     *
+     * 使用一个数组保存已访问的路径
+     * 1.当T是空节点，返回上一层，不做处理
+     * 2.当T是叶子节点,先将T加入路径中，在输出路径
+     * 3.当T不是叶子节点也不是空节点的时候,将该节点加入路径中
+     * 4.path中存储从根节点到叶子节点的路径，pathLength是path的长度
+     */
+    public void printLeafNodeRoute() {
+        printLeafNodeRoute(root, new ArrayList(), 0);
+
+    }
+
+    /**
+     *  二叉树递归中，程序运行时每个节点会经过三次
+     *
+     *  TODO ???????????????????????
+     */
+    private void printLeafNodeRoute(TreeNode node, ArrayList path, int pathlen) {
+        if (node == null) {
+            return;
+        }
+        path.add(node.element);
+        if (node.getLeft() == null && node.getRight() == null) {
+            System.out.print("叶子结点" + node + "的路径: ");
+            for (int i = pathlen; i >= 0 ; i--) {
+                System.out.print(path.get(i));
+            }
+            System.out.println();
+        }
+        printLeafNodeRoute(node.getLeft(), path, pathlen);
+        printLeafNodeRoute(node.getRight(), path, pathlen);
+        // pathlen--运行时，是程序最后一次经过此节点，因此应该把它从路径栈移除
+        pathlen--;
+    }
+
+
+    /**
+     * 输出二叉树中从每个叶子结点到根结点的路径
+     */
+    public List<String> binTreePath1(TreeNode root) {
+        LinkedList<String> l = new LinkedList<String>();
+        if(root==null) return l;//如果为空，返回空
+        getPath(root,l,root.element+"");
+        return l;
+    }
+
+
+    private void getPath(TreeNode root, List<String> re, String s) {
+        if(root.left==null && root.right==null) {//此时为叶节点，把s添加到结果列表中，返回
+            re.add(s+"");
+            return ;
+        }
+        if(root.left!=null)//左子树不为空，递归
+            getPath(root.left,re,s+"->"+root.left.element);
+        if(root.right!=null)//右子树不为空，递归
+            getPath(root.right,re,s+"->"+root.right.element);
+    }
+
+    /**
+     * 输出二叉树中从每个叶子结点到根结点的路径
+     */
+    public   List<String> binTreePath2(TreeNode root) {
+        LinkedList<String> l = new LinkedList<String>();
+        if(root==null)return l;
+        if(root.left==null && root.right==null) {
+            l.add(root.element+"");
+            return l;
+        }
+        for (String s : binTreePath2(root.left)) {
+            l.add(root.element+"->"+s);
+        }
+        for (String s : binTreePath2(root.right)) {
+            l.add(root.element+"->"+s);
+        }
+        return l;
+    }
+
 
     public TreeNode<E> getRoot() {
         return root;

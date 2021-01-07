@@ -1,6 +1,7 @@
 package com.peijun.binarytree;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author: Dylan kwok GSGB
@@ -67,15 +68,30 @@ public class BinaryTreeErgodic {
         BinaryTree binaryTree = new BinaryTree();
         binaryTree.createBinaryTree(TREE_3);
 
-        // 二叉树总结点个数
-        System.out.println("二叉树总结点个数: " + binaryTree.nodeCount(binaryTree.getRoot()));
-        // 二叉树叶子结点个数
-        System.out.println("二叉树叶子结点个数: " + binaryTree.leafNodeCount(binaryTree.getRoot()));
-        // 二叉树深度
-        System.out.println("二叉树深度: " + binaryTree.treeDepth(binaryTree.getRoot()));
-        // 打印二叉树叶子结点
-        System.out.print("二叉树叶子结点: ");
-        binaryTree.printLeafNode(binaryTree.getRoot());
+//        // 二叉树总结点个数
+//        System.out.println("二叉树总结点个数: " + binaryTree.nodeCount(binaryTree.getRoot()));
+//        // 二叉树叶子结点个数
+//        System.out.println("二叉树叶子结点个数: " + binaryTree.leafNodeCount(binaryTree.getRoot()));
+//        // 二叉树深度
+//        System.out.println("二叉树深度: " + binaryTree.treeDepth(binaryTree.getRoot()));
+//        // 打印二叉树叶子结点
+//        System.out.print("二叉树叶子结点: ");
+//        binaryTree.printLeafNode(binaryTree.getRoot());
+//        System.out.println();
+//
+//        // 二叉树度为1结点的个数
+//        System.out.println("二叉树度为1结点的个数: " + binaryTree.onlyOneSubNodeCount(binaryTree.getRoot()));
+//        // 打印二叉树度为1结点
+//        System.out.print("二叉树度为1结点: ");
+//        binaryTree.printOnlyOneSubNode(binaryTree.getRoot());
+//        System.out.println();
+
+        // 打印二叉树所有叶子结点到根的路径
+        List list = binaryTree.binTreePath2(binaryTree.getRoot());
+        for (Object o : list) {
+            System.out.println(o);
+        }
+
     }
 
     /**
