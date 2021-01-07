@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
  *      创建二叉树 √
  *      二叉树的深度 √
  *      二叉树总结点个数 √
- *      二叉树叶子结点个数 √
- *      二叉树度为1结点个数
+ *      二叉树叶子结点个数 √ 打印叶子结点
+ *      二叉树度为1结点个数  打印度为1的节点
  *      输出二叉树中从每个叶子结点到根结点的路径
  *      二叉树第k层的结点个数
  *      第k层上叶子结点的个数
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  *              //两条规则，违反任意一条均不是完全二叉树
  *              //1、某结点无左孩子，则一定没有右孩子
  *              //2、若某结点缺少左孩子或右孩子，则其所有后继（层次遍历的后继）一定无孩子
- *      打印二叉树结构
+ *
  */
 public class BinaryTree<E> {
     /**
@@ -68,7 +68,7 @@ public class BinaryTree<E> {
      */
     private void preOrder(TreeNode node) {
         // 前序遍历，先打印父结点
-        System.out.println(node);
+        System.out.print(node);
         // 假如当前结点的左子结点不为空，继续遍历左子树
         if (node.getLeft() != null) {
             preOrder(node.getLeft());
@@ -102,7 +102,7 @@ public class BinaryTree<E> {
             inOrder(node.getLeft());
         }
         // 中序遍历，中间打印父结点
-        System.out.println(node);
+        System.out.print(node);
         // 假如当前结点的右子结点不为空，继续遍历右子树
         if (node.getRight() != null) {
             inOrder(node.getRight());
@@ -132,7 +132,7 @@ public class BinaryTree<E> {
             postOrder(node.getRight());
         }
         // 后序遍历，最后打印父结点
-        System.out.println(node);
+        System.out.print(node);
     }
 
     /**
@@ -152,7 +152,7 @@ public class BinaryTree<E> {
         while (!deque.isEmpty()) {
             // 队首出队
             TreeNode<E> node = deque.remove();
-            System.out.println(node); // 打印当前结点
+            System.out.print(node); // 打印当前结点
             TreeNode<E> left = node.getLeft();
             TreeNode<E> right = node.getRight();
             if (left != null) {
@@ -208,7 +208,7 @@ public class BinaryTree<E> {
         TreeNode<E> node = root;
         while(node != null || !stack.isEmpty()){
             if (node != null){
-                System.out.println(node); // 前序遍历
+                System.out.print(node); // 前序遍历
                 stack.push(node);
                 node = node.getLeft(); // 获取左子结点
             } else {
@@ -236,7 +236,7 @@ public class BinaryTree<E> {
 
         while(!stack.isEmpty()) {
             TreeNode<E> current = stack.pop();
-            System.out.println(current); // 打印弹栈元素
+            System.out.print(current); // 打印弹栈元素
 
             if(current.right != null) {
                 // 先右子结点压栈，后打印
@@ -276,7 +276,7 @@ public class BinaryTree<E> {
             } else {
                 // 左子结点为空，或者右子结点为空，出栈一个结点访问它
                 node = stack.pop();
-                System.out.println(node); // 中序遍历
+                System.out.print(node); // 中序遍历
                 node = node.getRight();
             }
         }
@@ -303,7 +303,7 @@ public class BinaryTree<E> {
                 node = stack.peek();
                 // 如果右结点为空，或者右结点之前遍历过，打印根结点
                 if(node.getRight() == null || node.getRight() == preNode){
-                    System.out.println(node);
+                    System.out.print(node);
                     node = stack.pop();
                     preNode = node;
                     node = null;
@@ -345,7 +345,7 @@ public class BinaryTree<E> {
                 flagStack.push(1);
                 node = node.getRight();
             } else {
-                System.out.println(node);
+                System.out.print(node);
                 node = null;
             }
         }
@@ -393,6 +393,20 @@ public class BinaryTree<E> {
         Integer leftDepth = treeDepth(node.getLeft());
         Integer rightDepth = treeDepth(node.getRight());
         return leftDepth > rightDepth ? leftDepth + 1 : rightDepth + 1;
+    }
+
+    /**
+     * 打印叶子结点
+     */
+    public void printLeafNode(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        if (node.getLeft() == null && node.getRight() == null) {
+            System.out.print(node);
+        }
+        printLeafNode(node.getLeft());
+        printLeafNode(node.getRight());
     }
 
     public TreeNode<E> getRoot() {
