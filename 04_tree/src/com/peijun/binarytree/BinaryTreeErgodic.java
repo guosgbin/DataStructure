@@ -86,11 +86,13 @@ public class BinaryTreeErgodic {
 //        binaryTree.printOnlyOneSubNode(binaryTree.getRoot());
 //        System.out.println();
 
+        binaryTree.printLeafNodeRoute();
+
         // 打印二叉树所有叶子结点到根的路径
-        List list = binaryTree.binTreePath2(binaryTree.getRoot());
-        for (Object o : list) {
-            System.out.println(o);
-        }
+//        List list = binaryTree.binTreePath2(binaryTree.getRoot());
+//        for (Object o : list) {
+//            System.out.println(o);
+//        }
 
     }
 

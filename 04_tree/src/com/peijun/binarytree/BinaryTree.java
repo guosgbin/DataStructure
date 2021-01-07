@@ -471,8 +471,9 @@ public class BinaryTree<E> {
             }
             System.out.println();
         }
-        printLeafNodeRoute(node.getLeft(), path, pathlen);
-        printLeafNodeRoute(node.getRight(), path, pathlen);
+        printLeafNodeRoute(node.getLeft(), path, pathlen + 1);
+        printLeafNodeRoute(node.getRight(), path, pathlen + 1);
+        path.remove(pathlen--);
         // pathlen--运行时，是程序最后一次经过此节点，因此应该把它从路径栈移除
         pathlen--;
     }
