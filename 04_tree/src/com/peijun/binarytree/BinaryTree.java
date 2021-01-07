@@ -1,5 +1,6 @@
 package com.peijun.binarytree;
 
+import javax.swing.tree.TreeNode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,10 @@ import java.util.stream.Collectors;
  *      后序遍历 递归和非递归
  *      层次遍历
  *      创建二叉树
+ *      二叉树的深度
+ *      二叉树叶子结点个数
+ *      二叉树度为1结点个数
+ *      二叉树总结点个数
  */
 public class BinaryTree<E> {
     /**
@@ -178,7 +183,13 @@ public class BinaryTree<E> {
     }
 
     /**
-     * 非递归前序遍历 方法3  --记这个--
+     * 非递归前序遍历  --记这个--
+     *
+     *  1.初始时依次扫描根结点的所有左侧结点，访问它，并将它们一一进栈
+     *  2.出栈一个结点
+     *  3.扫描该结点的右子结点，并将其进栈
+     *  4.依次扫描右子结点的所有左侧结点，并一一进栈
+     *  5.反复该过程直到栈为空为止
      */
     public void preOrderStack() {
         Stack<TreeNode<E>> stack = new Stack<>();
@@ -229,6 +240,12 @@ public class BinaryTree<E> {
 
     /**
      * 非递归中序遍历 2
+     *
+     * 1.初始时依次扫描根结点的所有左侧结点，并将它们一一进栈
+     * 2.出栈一个结点，访问它
+     * 3.扫描该结点的右子结点，并将其进栈
+     * 4.依次扫描右子结点的所有左侧结点，并一一进栈
+     * 5.反复该过程直到栈为空为止
      */
     public void inOrderStack() {
         if(root == null) {
@@ -240,10 +257,12 @@ public class BinaryTree<E> {
         // 循环退出条件 当前结点为空或栈为空
         while(node != null || !stack.isEmpty()) {
             if(node != null) {
-                //
+                // case 1 首先一次扫描根结点的所有左子结点，一一进栈
+                // case 2 一次扫描右子节点的所有左侧结点，一一进栈
                 stack.push(node);
                 node = node.getLeft();
             } else {
+                // 左子结点为空，或者右子结点为空，出栈一个结点访问它
                 node = stack.pop();
                 System.out.println(node); // 中序遍历
                 node = node.getRight();
@@ -253,6 +272,12 @@ public class BinaryTree<E> {
 
     /**
      * 非递归后序遍历 --记这个--
+     *
+     *  1.初始时依次扫描根结点的所有左侧结点，并将它们一一进栈
+     *  2.查看栈顶元素的右结点
+     *      2.1 假如该右结点为空，或者已经访问过，则弹出栈顶结点，并访问该结点。
+     *      2.1 假如该右节点不为空，或者未访问过，则依次扫描右子结点的所有左侧结点，并一一进栈
+     *  3.反复该过程直到栈为空为止
      */
     public void postOrderStack(){
         Stack<TreeNode<E>> stack = new Stack<TreeNode<E>>();
@@ -276,6 +301,86 @@ public class BinaryTree<E> {
                 }
             }
         }
+    }
+
+    /**
+     * 使用标志
+     *
+     * 思路
+     *  node首先指向root结点
+     *  因为是后续遍历，所以不会先打印父结点，需要先将父结点压栈，而不是访问它
+     *  当左子树访问完毕后，会再次回到此处，搜索到了该父结点(结点出栈)，此时也不去访问它，需要先去访问右子节点
+     *  所以需要再次将该结点入栈。只有当该结点的右子节点访问完毕返回到该结点时，才能访问该结点。
+     *
+     *  为了标明某个结点是否访问过需要增加一个flag变量，flag=0表示该结点暂时不支持访问，1表示可以访问。
+     *  flag的值随同节点一起入栈和出栈。算法中设置了两个堆栈，堆栈1存放结点地址，堆栈2存放flag
+     */
+    public void postOrderStack2(){
+        Stack<TreeNode<E>> stack = new Stack<>();
+        Stack<Integer> flagStack = new Stack<>();
+        TreeNode<E> node = root;
+        int flag = 0; // 标识初始0
+        while(node != null || !stack.isEmpty()){
+            while (node != null) {
+                stack.push(node);
+                flagStack.push(0); // 初始0
+                node = node.getLeft();
+            }
+            node = stack.pop(); // 弹栈
+            flag = flagStack.pop();
+            if (flag == 0) {
+                stack.push(node);
+                flagStack.push(1);
+                node = node.getRight();
+            } else {
+                System.out.println(node);
+                node = null;
+            }
+        }
+    }
+
+    /**
+     * 二叉树总结点个数
+     *
+     * 方式1是定义一个变量，在遍历的时候加1即可
+     * 方式2是递归查找结点个数
+     *
+     * 此代码实现的是方式2 方式1太简单了
+     */
+    public Integer nodeCount(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        Integer leftCount = nodeCount(node.getLeft());
+        Integer rightCount = nodeCount(node.getRight());
+        return  leftCount + rightCount + 1;
+    }
+
+    /**
+     * 二叉树叶子结点个数
+     */
+    public Integer leafNodeCount(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        if (node.getRight() == null && node.getLeft() == null) {
+            return 1;
+        }
+        Integer leftCount = leafNodeCount(node.getLeft());
+        Integer rightCount = leafNodeCount(node.getRight());
+        return  leftCount + rightCount;
+    }
+
+    /**
+     * 二叉树的深度
+     */
+    public Integer treeDepth(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        Integer leftDepth = treeDepth(node.getLeft());
+        Integer rightDepth = treeDepth(node.getRight());
+        return leftDepth > rightDepth ? leftDepth + 1 : rightDepth + 1;
     }
 
     public TreeNode<E> getRoot() {

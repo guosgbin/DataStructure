@@ -39,12 +39,12 @@ public class BinaryTreeErgodic {
 //        binaryTree.levelOrder();
 
         /* ------ 开始测试 非递归遍历 ------*/
-        BinaryTree<String> binaryTree = initBinaryTree();
-        binaryTree.preOrder();
-        System.out.println("=====");
-        binaryTree.preOrderStack();
-        System.out.println("=====");
-        binaryTree.preOrderStack2();
+//        BinaryTree<String> binaryTree = initBinaryTree();
+//        binaryTree.preOrder();
+//        System.out.println("=====");
+//        binaryTree.preOrderStack();
+//        System.out.println("=====");
+//        binaryTree.preOrderStack2();
 
 //        binaryTree.inOrder();
 //        System.out.println("=====");
@@ -59,6 +59,14 @@ public class BinaryTreeErgodic {
 //        System.out.println("=====");
 //        binaryTree.postOrderStack2();
 
+        /* ------ 开始测试 结点个数 ------*/
+        BinaryTree<String> binaryTree = initBinaryTree();
+        Integer count = binaryTree.nodeCount(binaryTree.getRoot());
+        System.out.println(count);
+
+        System.out.println(binaryTree.leafNodeCount(binaryTree.getRoot()));
+
+        System.out.println(binaryTree.treeDepth(binaryTree.getRoot()));
     }
 
     /**
