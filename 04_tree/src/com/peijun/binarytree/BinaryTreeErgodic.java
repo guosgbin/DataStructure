@@ -55,9 +55,29 @@ public class BinaryTreeErgodic {
         // 测试非递归遍历二叉树
 //        testNotRecursionErgodic();
         // 测试二叉树的其他操作
-        testOtherOption();
+//        testOtherOption();
+
+        // 测试二叉树的翻转
+        testInvertTree();
+
+    }
+
+    /**
+     * 测试二叉树的翻转
+     */
+    private static void testInvertTree() {
+        BinaryTree binaryTree = new BinaryTree();
+        binaryTree.createBinaryTree(TREE_3);
 
 
+        binaryTree.invertTreeBFS(binaryTree.getRoot());
+
+        // 前序遍历看下
+        binaryTree.preOrder();
+        System.out.println(LINE);
+        // 层次遍历看下
+        binaryTree.inOrder();
+        System.out.println(LINE);
     }
 
     /**
@@ -86,13 +106,19 @@ public class BinaryTreeErgodic {
 //        binaryTree.printOnlyOneSubNode(binaryTree.getRoot());
 //        System.out.println();
 
-        binaryTree.printLeafNodeRoute();
+         // 打印二叉树的叶子结点
+//        binaryTree.printLeafNodeRoute();
 
         // 打印二叉树所有叶子结点到根的路径
 //        List list = binaryTree.binTreePath2(binaryTree.getRoot());
 //        for (Object o : list) {
 //            System.out.println(o);
 //        }
+
+        // 二叉树第k层结点的个数
+//        System.out.println(binaryTree.getNodeCountByLevel(binaryTree.getRoot(), 5));
+        // 二叉树第k层叶子结点的个数
+//        System.out.println(binaryTree.getLeafNodeCountByLevel(binaryTree.getRoot(), 6));
 
     }
 

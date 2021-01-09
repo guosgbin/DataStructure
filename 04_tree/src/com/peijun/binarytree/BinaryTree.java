@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
  *      二叉树叶子结点个数 √ 打印叶子结点 √
  *      二叉树度为1结点个数 √  打印度为1的节点 √
  *      输出二叉树中从每个叶子结点到根结点的路径
- *      二叉树第k层的结点个数
- *      第k层上叶子结点的个数
- *      二叉树的所有左右子树进行交换
+ *      二叉树第k层的结点个数 √
+ *      第k层上叶子结点的个数 √
+ *      二叉树的所有左右子树进行交换 √
  *      判断一颗二叉树是否是完全二叉树
  *              //两条规则，违反任意一条均不是完全二叉树
  *              //1、某结点无左孩子，则一定没有右孩子
@@ -520,6 +520,131 @@ public class BinaryTree<E> {
         return l;
     }
 
+
+    /**
+     * 二叉树第k层的结点个数
+     *
+     * 思路: 获取第k层结点个数,做个递归展示
+     *
+     *
+     * 第k层结点个数: 可视为根节点的左子结点的k-1层结点个数，加上根结点的右子结点的k-1层结点个数
+     *
+     * eg.
+     *       A
+     *     /   \
+     *    B     C
+     *   /     / \
+     *  D     E   F
+     *  比如说，求第3层结点的个数，就可以视为3-1=2层的B结点和C结点的子结点个数的总和
+     *    B     C
+     *   /     / \
+     *  D     E   F
+     *
+     *  递归退出条件1 node == null，说明该条路径深度小于k。
+     *  递归退出条件2: level == 1，
+     */
+    public Integer getNodeCountByLevel(TreeNode node, int k) {
+        if (k < 1) {
+            throw new RuntimeException("层数错误");
+        }
+        if (node == null) {
+            // case 1: node为null，说明k-1层 没有左子结点或右子结点，返回0
+            // case 2: 还没到第k-1层，但是没有左子结点或右子结点
+            return 0;
+        }
+        if (k == 1) {
+            // k == 1 表明k-1层的左子结点或右子结点存在，因为上面node已经判空了
+//            System.out.println(node);
+            return 1;
+        }
+        return getNodeCountByLevel(node.getLeft(), k - 1) + getNodeCountByLevel(node.getRight(), k - 1);
+    }
+
+    /**
+     * 第k层上叶子结点的个数
+     */
+    public Integer getLeafNodeCountByLevel(TreeNode node, int k) {
+        if (k < 1) {
+            throw new RuntimeException("层数错误");
+        }
+        if (node == null) {
+            return 0;
+        }
+        if (k == 1) {
+            if (node.getLeft() == null && node.getRight() == null) {
+//                System.out.println(node);
+                return 1; // 此结点是叶子结点
+            }
+            return 0; // 此结点不是叶子结点
+        }
+        return getLeafNodeCountByLevel(node.getLeft(), k - 1) + getLeafNodeCountByLevel(node.getRight(), k - 1);
+    }
+
+
+    /**
+     * 二叉树的所有左右子树进行交换 递归
+     */
+    public void invertTree(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+        TreeNode temp = node.getRight();
+        node.setRight(node.getLeft());
+        node.setLeft(temp);
+        invertTree(node.getLeft());
+        invertTree(node.getRight());
+    }
+
+    /**
+     * 二叉树的所有左右子树进行交换 循环，栈存储（DFS，非递归)
+     * 左右节点进行交换，循环翻转每个节点的左右子节点，
+     * 将未翻转的子节点存入栈中，循环直到栈里所有节点都循环交换完为止。
+     */
+    public void invertTreeDFS(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            TreeNode temp = node.getRight();
+            node.setRight(node.getLeft());
+            node.setLeft(temp);
+            if (node.getLeft() != null) {
+                stack.push(node.getLeft());
+            }
+            if (node.getRight() != null) {
+                stack.push(node.getRight());
+            }
+        }
+    }
+
+    /**
+     * 二叉树的所有左右子树进行交换
+     * 循环，队列存储（BFS，非递归）
+     *
+     *
+     */
+    public void invertTreeBFS(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            TreeNode left = node.getLeft();
+            node.setLeft(node.getRight());
+            node.setRight(left);
+            if (node.getLeft() != null) {
+                queue.offer(node.getLeft());
+            }
+            if (node.getRight() != null) {
+                queue.offer(node.getRight());
+            }
+        }
+    }
 
     public TreeNode<E> getRoot() {
         return root;
