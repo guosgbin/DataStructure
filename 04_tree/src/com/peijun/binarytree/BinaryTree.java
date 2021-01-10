@@ -29,10 +29,7 @@ import java.util.stream.Collectors;
  *      二叉树第k层的结点个数 √
  *      第k层上叶子结点的个数 √
  *      二叉树的所有左右子树进行交换 √
- *      判断一颗二叉树是否是完全二叉树
- *              //两条规则，违反任意一条均不是完全二叉树
- *              //1、某结点无左孩子，则一定没有右孩子
- *              //2、若某结点缺少左孩子或右孩子，则其所有后继（层次遍历的后继）一定无孩子
+ *      判断一颗二叉树是否是完全二叉树 √
  *
  */
 public class BinaryTree<E> {
@@ -356,6 +353,7 @@ public class BinaryTree<E> {
      *
      * 方式1是定义一个变量，在遍历的时候加1即可
      * 方式2是递归查找结点个数
+     *      如果二叉树为空，则结点数为0，否则二叉树的结点数等于左子树和右子树的结点之和加1
      *
      * 此代码实现的是方式2 方式1太简单了
      */
@@ -370,6 +368,9 @@ public class BinaryTree<E> {
 
     /**
      * 二叉树叶子结点个数
+     * 如果二叉树为空，则叶子数为0
+     * 如果根的左右子树都为空，则叶子数为1
+     * 否则求左子树的叶子数和右子树叶子数之和
      */
     public Integer leafNodeCount(TreeNode node) {
         if (node == null) {
@@ -385,6 +386,8 @@ public class BinaryTree<E> {
 
     /**
      * 二叉树的深度
+     * 如果二叉树为空，则深度为0
+     * 否则为根的左右子树的深度最大值加1
      */
     public Integer treeDepth(TreeNode node) {
         if (node == null) {
@@ -623,8 +626,6 @@ public class BinaryTree<E> {
     /**
      * 二叉树的所有左右子树进行交换
      * 循环，队列存储（BFS，非递归）
-     *
-     *
      */
     public void invertTreeBFS(TreeNode root) {
         if (root == null) {
@@ -644,6 +645,88 @@ public class BinaryTree<E> {
                 queue.offer(node.getRight());
             }
         }
+    }
+
+    /**
+     * 判断一个二叉树是否是完全二叉树
+     * 二叉树的概念：
+     *    除了最后一层，其他层都是充满的，而且最后一层的叶子节点在左边连续，倒数第二层的叶子节点在右边连续
+     *
+     * 我们可以根据完全二叉树的定义，按照层序遍历一颗树
+     * 当遇到空结点时如果这棵树已经遍历完毕，则这棵树就是完全二叉树
+     * 如果遇到空结点的后面还有元素则这棵树就不是完全二叉树。
+     *
+     * 我们可以用一个flag来标记，当遇到第一个空结点是标记为1，如果后面要是再遇到非空结点时就表示不是完全二叉树。
+     */
+    public boolean isCompleteBinaryTree(TreeNode node) {
+        if (node == null) {
+            return false;
+        }
+        boolean flag = false; // true表示已经遇到了度不为2的结点
+        ArrayDeque<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(node);
+
+        while (!queue.isEmpty()) {
+            // 出队
+            TreeNode head = queue.poll();
+            if (head.getRight() != null && head.getLeft() == null) {
+                // 有右孩子必定有左孩子
+                return false;
+            }
+            if (flag && head.left != null) {
+                return false;
+            }
+            if (head.left == null || head.right == null)
+                flag = true; // 遇到了度不为2的结点
+            // 当前结点的左孩子不为空
+            if (head.left != null)
+                queue.add(head.left);
+            // 当前结点的右孩子不为空
+            if (head.right != null)
+                queue.add(head.right);
+        }
+        return true;
+    }
+
+    /**
+     * 结合层次遍历，将为null的结点也放到队列中，当将所有的结点放到队列中后
+     * 当遍历到某个结点的元素域的值为null时，退出第一个循环，此时队列中还有元素
+     * 假如是完全二叉树，剩下的结点中都是元素域为null的结点，否则不是完全二叉树
+     *
+     *           曹操
+     *        /       \
+     *      曹丕       曹植
+     *     /    \    /    \
+     *   曹睿    曹协 n    曹志
+     *  /  \    /  \     /  \
+     * n   曹芳 n    n   n    n
+     *     /  \
+     *    n    n
+     */
+    public boolean isCompleteBinaryTree2(TreeNode node) {
+        if (node == null) {
+            return false;
+        }
+        ArrayDeque<TreeNode> queue = new ArrayDeque<>(); // 此队列不允许增加null结点，可以添加值为null的结点
+        queue.offer(node);
+        // 遇到第一个null结点是退出循环
+        while (node.getElement() != null) {
+            // 获取队首元素
+            TreeNode head = queue.poll();
+            // 将结点的左右子结点入队，空结点也入队
+            queue.offer(head.getLeft() != null ? head.getLeft() : new TreeNode(null));
+            queue.offer(head.getRight() != null ? head.getRight() : new TreeNode(null));
+            // node赋值为新的队首元素
+            node = queue.peek();
+        }
+        // 将队列中剩下的元素依次出队，假如有一个不是null，则不是完全二叉树
+        while (!queue.isEmpty()) {
+            TreeNode poll = queue.poll();
+            if (poll.getElement() != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public TreeNode<E> getRoot() {

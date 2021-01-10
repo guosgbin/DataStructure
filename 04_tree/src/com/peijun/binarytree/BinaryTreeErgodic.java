@@ -58,8 +58,16 @@ public class BinaryTreeErgodic {
 //        testOtherOption();
 
         // 测试二叉树的翻转
-        testInvertTree();
+//        testInvertTree();
+        // 测试是否是完全二叉树
+        testCompleteTree();
 
+    }
+
+    private static void testCompleteTree() {
+        BinaryTree binaryTree = new BinaryTree();
+        binaryTree.createBinaryTree(TREE_3);
+        System.out.println("是否是二叉树: " + binaryTree.isCompleteBinaryTree(binaryTree.getRoot()));
     }
 
     /**
