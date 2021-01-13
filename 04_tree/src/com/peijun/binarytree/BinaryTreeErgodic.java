@@ -47,6 +47,17 @@ public class BinaryTreeErgodic {
      */
     private static final String TREE_3 = "A,B,D,#,G,I,#,#,J,#,#,#,C,E,#,#,F,#,H,#,#";
 
+    /**
+     *            A
+     *          /   \
+     *         B     C
+     *        / \   / \
+     *       D   E F   G
+     *      / \
+     *     H   I
+     */
+    private static final String[] TREE_4 = {"A","B","C","D","E","F","G","H","I"};
+
     public static void main(String[] args) {
         // 开始测试 递归遍历
 //        testRecursionErgodic();
@@ -60,7 +71,22 @@ public class BinaryTreeErgodic {
         // 测试二叉树的翻转
 //        testInvertTree();
         // 测试是否是完全二叉树
-        testCompleteTree();
+//        testCompleteTree();
+        // 测试顺序存储的完全二叉树的遍历
+        testArrayTreeErgodic();
+    }
+
+    /**
+     * 测试顺序存储的完全二叉树的遍历
+     */
+    private static void testArrayTreeErgodic() {
+        ArrayBinaryTree<String> binaryTree = new ArrayBinaryTree<>(TREE_4);
+        binaryTree.preOrder();
+        System.out.println(LINE);
+        binaryTree.inOrder();
+        System.out.println(LINE);
+        binaryTree.postOrder();
+        System.out.println(LINE);
 
     }
 
