@@ -93,9 +93,11 @@ public class BinaryTreeTest {
      */
     private static void testThreadedTree() {
         ThreadedBinaryTree<String> threadedTree = ThreadedBinaryTree.initThreadedTree();
-
+        // 中序线索化二叉树
         threadedTree.inThread(threadedTree.getRoot());
 
+        // 中序遍历二叉树
+        threadedTree.inOrder01(threadedTree.getRoot());
     }
 
     /**

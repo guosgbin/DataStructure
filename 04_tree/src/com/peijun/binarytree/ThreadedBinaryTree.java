@@ -61,6 +61,87 @@ public class ThreadedBinaryTree<E> {
         }
     }
 
+    /**
+     * 中序遍历线索二叉树  递归
+     * @param node
+     */
+    public void inOrder01(ThreadedNode<E> node) {
+        if (node == null) {
+            return;
+        }
+        if (node.getLeftTag() != 1) {
+            inOrder01(node.getLeft());
+        }
+        System.out.println(node);
+        if (node.getRightTag() != 1) {
+            inOrder01(node.getRight());
+        }
+    }
+
+    /**
+     * 中序遍历线索二叉树 非递归
+     * 思路：
+     *  1.首先找到最左边的结点，此结点是中序遍历的第一个结点
+     *  2.打印结点
+     *  3.因为线索化二叉树的指针可能会指向后继结点，
+     *      所以沿着右索引查找当前结点的后继结点并打印，直到rightTag == 0
+     *  4.遍历当前结点的右子树
+     *  循环往复
+     */
+    public void inOrder02() {
+        ThreadedNode<E> node = root; // 获取根结点
+        while (node != null) {
+            // 首先找到最左边的结点
+            while (node.getLeftTag() == 0) {
+                node = node.getLeft();
+            }
+            // 打印结点
+            System.out.println(node);
+            // 判断当前结点的右指针是否指向后继结点
+            while (node.getRightTag() == 1 && node.getRight() != null) {
+                // 循环条件，右指针指向的结点是当前结点的后继结点，直接打印
+                node = node.getRight(); // 访问后继结点
+                System.out.println(node);
+            }
+            // 遍历右子树
+            node = node.getRight();
+        }
+    }
+
+    /**
+     * 中序遍历线索二叉树  非递归
+     */
+    public void inOrder03() {
+
+    }
+
+    /**
+     * 找到某个结点 中序遍历的 第一个访问的结点
+     * @param node
+     * @return
+     */
+    private ThreadedNode<E> firstNode(ThreadedNode<E> node) {
+        if (node == null) {
+            return null;
+        }
+        // 直到找到结点的左指针标记为1的，说明就是最左结点了(但是不一定是叶子结点)
+        while (node.getLeftTag() == 0) {
+            node = node.getLeft();
+        }
+        return node;
+    }
+
+    /**
+     * 找到某个结点的下一个结点
+     * @param node
+     * @return
+     */
+    private ThreadedNode<E> nextNode(ThreadedNode<E> node) {
+        // TODO 待完成 睡觉了
+
+
+        return null;
+    }
 
     /**
      * 笨比方法 手动创建一个二叉树，直观图如下
