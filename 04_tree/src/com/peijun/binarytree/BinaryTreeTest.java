@@ -11,7 +11,7 @@ import java.util.List;
  *
  * 二叉树遍历测试
  */
-public class BinaryTreeErgodic {
+public class BinaryTreeTest {
     private static final String LINE = System.lineSeparator() + "===================";
 
     /**
@@ -73,7 +73,29 @@ public class BinaryTreeErgodic {
         // 测试是否是完全二叉树
 //        testCompleteTree();
         // 测试顺序存储的完全二叉树的遍历
-        testArrayTreeErgodic();
+//        testArrayTreeErgodic();
+
+
+        // 测试线索化二叉树
+        testThreadedTree();
+    }
+
+    /**
+     * 测试线索化二叉树
+     *
+     *          曹操
+     *        /     \
+     *      曹丕     曹植
+     *     /   \       \
+     *   曹睿   曹协     曹志
+     *      \
+     *      曹芳
+     */
+    private static void testThreadedTree() {
+        ThreadedBinaryTree<String> threadedTree = ThreadedBinaryTree.initThreadedTree();
+
+        threadedTree.inThread(threadedTree.getRoot());
+
     }
 
     /**
