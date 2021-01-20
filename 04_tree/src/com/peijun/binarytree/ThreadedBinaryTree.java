@@ -37,7 +37,20 @@ public class ThreadedBinaryTree<E> {
     /**
      * 中序线索化二叉树
      */
-    public void inThread(ThreadedNode<E> node) {
+    public void inThread() {
+        if (root == null) {
+            return;
+        }
+        pre = null;
+        inThread(root);
+        if (pre != null) {
+            // 处理最后一个结点 因为最后一个结点的状态未设置就退出了
+            pre.setRightTag(1); // 设置为1是因为最后一个结点的右指针肯定指向null的
+            pre.setRight(null);
+        }
+    }
+
+    private void inThread(ThreadedNode<E> node) {
         if (node == null) {
             return;
         }
@@ -60,6 +73,7 @@ public class ThreadedBinaryTree<E> {
             inThread(node.getRight());
         }
     }
+
 
     /**
      * 中序遍历线索二叉树  递归
@@ -112,7 +126,10 @@ public class ThreadedBinaryTree<E> {
      * 中序遍历线索二叉树  非递归
      */
     public void inOrder03() {
-
+        ThreadedNode<E> node = root;
+        for(node = firstNode(node); node != null; node = nextNode(node)) {
+            System.out.println(node);
+        }
     }
 
     /**
@@ -133,14 +150,62 @@ public class ThreadedBinaryTree<E> {
 
     /**
      * 找到某个结点的下一个结点
+     * 假如当前结点的rightTag标志为 1 说明其指向后继结点 直接返回
+     * 假如当前结点的rightTag标志为 0 说明其指向右子结点 返回右子结点的最左结点
+     *
      * @param node
      * @return
      */
     private ThreadedNode<E> nextNode(ThreadedNode<E> node) {
-        // TODO 待完成 睡觉了
+        if (node == null) {
+            return null;
+        }
+        if (node.getRightTag() == 1) {
+            return node.getRight();
+        } else {
+            // 访问右结点的 后继   右子树最左下的结点
+            return firstNode(node.getRight());
+        }
+    }
 
+    /**
+     * 反向中序遍历 线索二叉树
+     */
+    public void inOrderReverse() {
+        ThreadedNode<E> node = root;
+        for(node = lastNode(node); node != null; node = preNode(node)) {
+            System.out.println(node);
+        }
+    }
 
-        return null;
+    /**
+     * 找到中序最后一个结点
+     * 中序遍历的 最后一个结点 是 最右边的结点  不一定是叶子结点
+     */
+    private ThreadedNode<E> lastNode(ThreadedNode<E> node) {
+        if (node == null) {
+            return null;
+        }
+        while (node.getRightTag() == 0) {
+            node = node.getRight();
+        }
+        return node;
+    }
+
+    /**
+     * 找到中序遍历  的上一个节点
+     * 假如当前结点的leftTag标志为 1 说明其指向前驱结点 直接返回
+     * 假如当前结点的leftTag标志为 0 说明其指向左子结点 返回左子结点的最右结点
+     */
+    private ThreadedNode<E> preNode(ThreadedNode<E> node) {
+        if (node == null) {
+            return null;
+        }
+        if (node.getLeftTag() == 1) {
+            return node.getLeft();
+        } else {
+            return lastNode(node.getLeft());
+        }
     }
 
     /**

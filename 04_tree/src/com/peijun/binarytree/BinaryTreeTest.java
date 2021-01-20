@@ -94,10 +94,13 @@ public class BinaryTreeTest {
     private static void testThreadedTree() {
         ThreadedBinaryTree<String> threadedTree = ThreadedBinaryTree.initThreadedTree();
         // 中序线索化二叉树
-        threadedTree.inThread(threadedTree.getRoot());
+        threadedTree.inThread();
 
         // 中序遍历二叉树
-        threadedTree.inOrder01(threadedTree.getRoot());
+//        threadedTree.inOrder01(threadedTree.getRoot());
+//        threadedTree.inOrder03();
+//        System.out.println(LINE);
+        threadedTree.inOrderReverse();
     }
 
     /**
