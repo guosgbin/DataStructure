@@ -98,6 +98,7 @@ public class BinaryTreeTest {
 
         // 中序遍历二叉树
 //        threadedTree.inOrder01(threadedTree.getRoot());
+//        threadedTree.inOrder02();
 //        threadedTree.inOrder03();
 //        System.out.println(LINE);
         threadedTree.inOrderReverse();
