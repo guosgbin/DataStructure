@@ -17,10 +17,21 @@ public class HuffmanCode {
     public static void main(String[] args) {
         HuffmanCode huffmanCode = new HuffmanCode();
 
-        String sentence = "nobody knows China better than me";
+        String sentence = "huang gang jvav";
         PriorityQueue<TreeNode> nodeQueue = huffmanCode.getNodeList(sentence.getBytes());
 
         huffmanCode.buildHuffmanTree(nodeQueue);
+
+//        huffmanCode.getCodes(huffmanCode.root, "",new StringBuffer());
+        Map<Byte, String> codeTable = huffmanCode.getCodeTable(huffmanCode.root);
+
+//        codeTable.forEach( (k,v) -> {
+//            System.out.println(k + "=====" + v);
+//        } );
+
+        huffmanCode.zip(sentence.getBytes(), codeTable);
+
+        System.out.println("=====");
 
     }
 
@@ -29,15 +40,6 @@ public class HuffmanCode {
      */
     private TreeNode root;
 
-    /**
-     * 哈夫曼编码表
-     */
-    private Map<Byte, String> codeTable;
-
-    /**
-     * 存放编码路径
-     */
-    private StringBuffer sb = new StringBuffer();
 
     /**
      * 获取每个字符和其权值(出现次数)的结点列表
@@ -85,18 +87,78 @@ public class HuffmanCode {
         root = nodeQueue.poll();
     }
 
+    /* ------------------
+
+    /**
+     * 哈夫曼编码表
+     */
+    private Map<Byte, String> codeTable = new HashMap<>();
+
+    /**
+     * 生成哈夫曼编码
+     */
+    public Map<Byte, String> getCodeTable(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        getCodes(root, "", new StringBuffer());
+        return codeTable;
+    }
+
     /**
      * 生成哈夫曼编码列表
      *
      * @param node
-     * @param code
+     * @param code 路径 左子结点是0 右子结点是1
      * @param sb
      */
     private void getCodes(TreeNode node, String code, StringBuffer sb) {
-        // TODO
+        if (node == null) {
+            return;
+        }
+        // 用一个新的sbb变量，是为了保存父结点的路径
+        StringBuffer sbb = new StringBuffer(sb);
+        sbb.append(code);
+        // 判断是否是叶子结点，假如是叶子结点，需要将这个结点和路径放到Map里
+        if (node.getLeft() == null && node.getRight() == null) {
+            // 是叶子结点，需要将这个结点和路径放到Map里
+            codeTable.put(node.getData(), sbb.toString());
+        } else {
+            // 不是叶子结点，递归左子树和右子树
+            getCodes(node.getLeft(), "0", sbb);
+            getCodes(node.getRight(), "1", sbb);
+        }
     }
 
-    // 将字符串生成哈夫曼编码的列表
+    /**
+     * 将字符串生成哈夫曼编码的列表 也就是byte[]数组
+     */
+    private byte[] zip(byte[] bytes, Map<Byte, String> codeTable) {
+        if (bytes == null) {
+            return null;
+        }
+
+        // 遍历原始bytes数组去查询 编码表
+        StringBuffer sb = new StringBuffer();
+        for (byte data : bytes) {
+            sb.append(codeTable.get(data));
+        }
+        // 将编码后的 字节码序列 转换为byte数组
+
+        // 创建返回byte[]数组
+        int len;
+        if (sb.length() % 8 == 0) {
+            len = sb.length() / 8;
+        } else {
+            len = sb.length() / 8 + 1;
+        }
+        byte[] newBytes = new byte[len];
+        // 将字节码每8位转为byte
+        for (int i = 0; i < sb.length(); i += 8) {
+
+        }
+        return null;
+    }
 
 
     /**
