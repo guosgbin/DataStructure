@@ -15,23 +15,31 @@ public class HuffmanCode {
 
     // nobody knows China better than me
     public static void main(String[] args) {
-        HuffmanCode huffmanCode = new HuffmanCode();
+//        HuffmanCode huffmanCode = new HuffmanCode();
+//
+//        String sentence = "huang gang jvav";
+//        PriorityQueue<TreeNode> nodeQueue = huffmanCode.getNodeList(sentence.getBytes());
+//
+//        huffmanCode.buildHuffmanTree(nodeQueue);
+//
+////        huffmanCode.getCodes(huffmanCode.root, "",new StringBuffer());
+//        Map<Byte, String> codeTable = huffmanCode.getCodeTable(huffmanCode.root);
+//
+////        codeTable.forEach( (k,v) -> {
+////            System.out.println(k + "=====" + v);
+////        } );
+//
+//        byte[] zip = huffmanCode.zip(sentence.getBytes(), codeTable);
+//
+//
+//        System.out.println("====="+ Arrays.toString(zip));
+//        System.out.println(zip.length);
+//        System.out.println(sentence.getBytes().length);
 
-        String sentence = "huang gang jvav";
-        PriorityQueue<TreeNode> nodeQueue = huffmanCode.getNodeList(sentence.getBytes());
-
-        huffmanCode.buildHuffmanTree(nodeQueue);
-
-//        huffmanCode.getCodes(huffmanCode.root, "",new StringBuffer());
-        Map<Byte, String> codeTable = huffmanCode.getCodeTable(huffmanCode.root);
-
-//        codeTable.forEach( (k,v) -> {
-//            System.out.println(k + "=====" + v);
-//        } );
-
-        huffmanCode.zip(sentence.getBytes(), codeTable);
-
-        System.out.println("=====");
+//        System.out.println(Byte.parseByte("11111111", 2));
+        int aByte = Integer.valueOf("11111111", 2);
+        byte aByte1 = (byte) aByte;
+        System.out.println(aByte1);
 
     }
 
@@ -154,10 +162,17 @@ public class HuffmanCode {
         }
         byte[] newBytes = new byte[len];
         // 将字节码每8位转为byte
+        int index = 0;
         for (int i = 0; i < sb.length(); i += 8) {
-
+            String singleByte;
+            if (i + 8 < sb.length()) {
+                singleByte = sb.substring(i, i + 8);
+            } else {
+                singleByte = sb.substring(i);
+            }
+            newBytes[index++] = (byte) Integer.parseInt(singleByte, 2);
         }
-        return null;
+        return newBytes;
     }
 
 
