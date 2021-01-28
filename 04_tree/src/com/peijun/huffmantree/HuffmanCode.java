@@ -12,42 +12,10 @@ import java.util.*;
  * 哈夫曼编码
  */
 public class HuffmanCode {
-
-    // nobody knows China better than me
-    public static void main(String[] args) {
-//        HuffmanCode huffmanCode = new HuffmanCode();
-//
-//        String sentence = "huang gang jvav";
-//        PriorityQueue<TreeNode> nodeQueue = huffmanCode.getNodeList(sentence.getBytes());
-//
-//        huffmanCode.buildHuffmanTree(nodeQueue);
-//
-////        huffmanCode.getCodes(huffmanCode.root, "",new StringBuffer());
-//        Map<Byte, String> codeTable = huffmanCode.getCodeTable(huffmanCode.root);
-//
-////        codeTable.forEach( (k,v) -> {
-////            System.out.println(k + "=====" + v);
-////        } );
-//
-//        byte[] zip = huffmanCode.zip(sentence.getBytes(), codeTable);
-//
-//
-//        System.out.println("====="+ Arrays.toString(zip));
-//        System.out.println(zip.length);
-//        System.out.println(sentence.getBytes().length);
-
-//        System.out.println(Byte.parseByte("11111111", 2));
-        int aByte = Integer.valueOf("11111111", 2);
-        byte aByte1 = (byte) aByte;
-        System.out.println(aByte1);
-
-    }
-
     /**
      * 根结点
      */
     private TreeNode root;
-
 
     /**
      * 获取每个字符和其权值(出现次数)的结点列表
@@ -102,6 +70,80 @@ public class HuffmanCode {
      */
     private Map<Byte, String> codeTable = new HashMap<>();
 
+
+    /**
+     * 使用哈夫曼编码对 字符串进行压缩
+     */
+    public byte[] zip(byte[] bytes) {
+        // 1.初始化结点
+        PriorityQueue<TreeNode> queue = getNodeList(bytes);
+        // 2.创建哈夫曼树
+        buildHuffmanTree(queue);
+        // 3.获得哈夫曼编码
+        Map<Byte, String> codeTable = getCodeTable(root);
+        // 4.压缩
+        return zipToByteArray(bytes, codeTable);
+    }
+
+    /**
+     * 使用哈夫曼编码 字符串进行  解缩
+     */
+    public String unZip(byte[] bytes) {
+        // 1.将byte[]数组转换为二进制字节码字符串
+
+        // 2.按照编码表进行解压
+
+    }
+
+    /**
+     *
+     * @param codeTable 编码表
+     * @param huffmanBytes 哈夫曼编码得到的字节数组 也就是压缩后的字节数组
+     * @return 返回原始的字节数组
+     */
+    private byte[] decode(Map<Byte, String> codeTable, byte[] huffmanBytes) {
+        StringBuffer sb = new StringBuffer();
+        // 把压缩后的byte[]数组转换为压缩后的二进制字节码 字符串
+        for (int i = 0; i < huffmanBytes.length; i++) {
+            byte abyte = huffmanBytes[i];
+            boolean flag = (i != huffmanBytes.length - 1);
+            sb.append(byteToBitString(flag, abyte));
+        }
+        // 将压缩后的二进制字节码 按照 编码表反向 获取其对应的key
+        // 首先将编码表的key-value转换， 也就是key->value, value->key
+        Map<String, Byte> newMap = new HashMap<>();
+        codeTable.forEach((k, v) -> {
+            newMap.put(v, k);
+        });
+        // 查表 将压缩后的字节码转换为对应的字符
+        for (int i = 0; i < sb.length(); i++) {
+            
+        }
+    }
+
+
+    /**
+     * 将byte字节转换为字节码字符串
+     * @param flag
+     * @param b
+     * @return
+     */
+    public String byteToBitString(boolean flag, byte b) {
+        int temp = b; // byte转为int
+        if (flag) {
+            // 如果是最后一个字节无需补高位
+            // 比如最后一个 字节是 28 -> 11100 此时就不能补高位了 假如补高位 就变成 00011100了
+            temp |= 256; // 或操作 1 0000 0000
+        }
+        String str = Integer.toBinaryString(temp);
+        if (flag) {
+            // 假如末位大于8个字节
+            return str.substring(str.length() - 8);
+        }
+        // 末位小于8个字节，直接返回
+        return str;
+    }
+
     /**
      * 生成哈夫曼编码
      */
@@ -141,7 +183,7 @@ public class HuffmanCode {
     /**
      * 将字符串生成哈夫曼编码的列表 也就是byte[]数组
      */
-    private byte[] zip(byte[] bytes, Map<Byte, String> codeTable) {
+    private byte[] zipToByteArray(byte[] bytes, Map<Byte, String> codeTable) {
         if (bytes == null) {
             return null;
         }
@@ -155,6 +197,7 @@ public class HuffmanCode {
 
         // 创建返回byte[]数组
         int len;
+        // 下面的if else等价 (sb.length() + 7 / 8 )
         if (sb.length() % 8 == 0) {
             len = sb.length() / 8;
         } else {
