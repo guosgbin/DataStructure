@@ -88,20 +88,19 @@ public class HuffmanCode {
     /**
      * 使用哈夫曼编码 字符串进行  解缩
      */
-    public String unZip(byte[] bytes) {
-        // 1.将byte[]数组转换为二进制字节码字符串
-
-        // 2.按照编码表进行解压
-
-    }
+//    public String unZip(byte[] bytes) {
+//        // 1.将byte[]数组转换为二进制字节码字符串
+//
+//        // 2.按照编码表进行解压
+//
+//    }
 
     /**
-     *
-     * @param codeTable 编码表
+     * @param codeTable    编码表
      * @param huffmanBytes 哈夫曼编码得到的字节数组 也就是压缩后的字节数组
      * @return 返回原始的字节数组
      */
-    private byte[] decode(Map<Byte, String> codeTable, byte[] huffmanBytes) {
+    public byte[] decode(Map<Byte, String> codeTable, byte[] huffmanBytes) {
         StringBuffer sb = new StringBuffer();
         // 把压缩后的byte[]数组转换为压缩后的二进制字节码 字符串
         for (int i = 0; i < huffmanBytes.length; i++) {
@@ -111,19 +110,38 @@ public class HuffmanCode {
         }
         // 将压缩后的二进制字节码 按照 编码表反向 获取其对应的key
         // 首先将编码表的key-value转换， 也就是key->value, value->key
-        Map<String, Byte> newMap = new HashMap<>();
+        Map<String, Byte> newCodeTable = new HashMap<>();
         codeTable.forEach((k, v) -> {
-            newMap.put(v, k);
+            newCodeTable.put(v, k);
         });
         // 查表 将压缩后的字节码转换为对应的字符
-        for (int i = 0; i < sb.length(); i++) {
-            
+        List<Byte> list = new ArrayList<>();
+        for (int i = 0; i < sb.length(); ) {
+            int count = 0; // 指针，指向新的字符编码的第一个字节位置
+            Byte aByte = null;
+            while (true) {
+                String key = sb.substring(i, i + count);
+                aByte = newCodeTable.get(key);
+                if (aByte != null) {
+                    break;
+                }
+                count ++;
+            }
+            list.add(aByte);
+            i += count; // 直接指向新的位置
         }
+
+        byte[] bytes = new byte[list.size()];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = list.get(i);
+        }
+        return bytes;
     }
 
 
     /**
      * 将byte字节转换为字节码字符串
+     *
      * @param flag
      * @param b
      * @return
@@ -218,6 +236,21 @@ public class HuffmanCode {
         return newBytes;
     }
 
+    public TreeNode getRoot() {
+        return root;
+    }
+
+    public void setRoot(TreeNode root) {
+        this.root = root;
+    }
+
+    public Map<Byte, String> getCodeTable() {
+        return codeTable;
+    }
+
+    public void setCodeTable(Map<Byte, String> codeTable) {
+        this.codeTable = codeTable;
+    }
 
     /**
      * 二叉树的结点对象
