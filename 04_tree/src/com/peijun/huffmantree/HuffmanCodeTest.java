@@ -13,8 +13,30 @@ import java.util.Arrays;
 public class HuffmanCodeTest {
 
     public static void main(String[] args) {
-        String sentence = "huang gang jvav";
-//        String sentence = "i like like like java do you like a java";
+//        testString();
+        testZip();
+    }
+
+    private static void testZip() {
+        HuffmanCode huffmanCode = new HuffmanCode();
+
+        // 压缩文件
+//        String src = "D:\\笔记模块\\GitHub开始\\数据结构和算法\\数据结构_013_哈夫曼树\\压缩使用文件\\picture.png";
+//        String dst="D:\\笔记模块\\GitHub开始\\数据结构和算法\\数据结构_013_哈夫曼树\\压缩使用文件\\pic.zip";
+//        huffmanCode.zipFile(src, dst);
+//        System.out.println("压缩完成");
+
+        // 解压文件
+        String src = "D:\\笔记模块\\GitHub开始\\数据结构和算法\\数据结构_013_哈夫曼树\\压缩使用文件\\pic.zip";
+        String dst="D:\\笔记模块\\GitHub开始\\数据结构和算法\\数据结构_013_哈夫曼树\\压缩使用文件\\picUnZip.png";
+        huffmanCode.unZipFile(src,dst);
+        System.out.println("解压完成");
+    }
+
+
+    private static void testString() {
+//        String sentence = "huang gang jvav";
+        String sentence = "i like like like java do you like a java";
 
         HuffmanCode huffmanCode = new HuffmanCode();
         byte[] zip = huffmanCode.zip(sentence.getBytes());

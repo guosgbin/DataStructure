@@ -1,6 +1,7 @@
 package com.peijun.huffmantree;
 
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -101,12 +102,19 @@ public class HuffmanCode {
      * @return 返回原始的字节数组
      */
     public byte[] decode(Map<Byte, String> codeTable, byte[] huffmanBytes) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         // 把压缩后的byte[]数组转换为压缩后的二进制字节码 字符串
-        for (int i = 0; i < huffmanBytes.length; i++) {
+        for (int i = 0; i < huffmanBytes.length - 1; i++) {
             byte abyte = huffmanBytes[i];
-            boolean flag = (i != huffmanBytes.length - 1);
-            sb.append(byteToBitString(flag, abyte));
+            //对于byte中的元素，只要不是倒数第2个和倒数第一个就正常处理
+            if(i != huffmanBytes.length -2){
+                //正常处理
+                sb.append(byteToBitStr(abyte, 8));
+            }else{
+                sb.append(byteToBitStr(abyte, (int)huffmanBytes[huffmanBytes.length -1]));
+            }
+//            boolean flag = (i != huffmanBytes.length - 1);
+//            sb.append(byteToBitString(flag, abyte));
         }
         // 将压缩后的二进制字节码 按照 编码表反向 获取其对应的key
         // 首先将编码表的key-value转换， 也就是key->value, value->key
@@ -115,7 +123,7 @@ public class HuffmanCode {
         // 查表 将压缩后的字节码转换为对应的字符
         List<Byte> list = new ArrayList<>();
         for (int i = 0; i < sb.length(); ) {
-            int count = 0; // 指针，指向新的字符编码的第一个字节位置
+            int count = 1; // 指针，指向新的字符编码的第一个字节位置
             Byte aByte = null;
             while (true) {
                 String key = sb.substring(i, i + count);
@@ -134,6 +142,22 @@ public class HuffmanCode {
             bytes[i] = list.get(i);
         }
         return bytes;
+    }
+
+    private String byteToBitStr(byte abyte) {
+        int temp = abyte;
+
+        temp |= 256;//与256按位或，就是在前面补0
+        String str = Integer.toBinaryString(temp);
+        return str.substring(str.length()-8);
+    }
+
+    //将输入的byte转化为二进制，不一定是8位，位数取决于b2
+    private String byteToBitStr(byte b, int b2){
+        int temp = b;
+        temp |= 256;//与256按位或，在前面补齐0
+        String str = Integer.toBinaryString(temp);
+        return str.substring(str.length()-b2);
     }
 
     //将二进制字符串解码
@@ -237,7 +261,7 @@ public class HuffmanCode {
         if (root == null) {
             return null;
         }
-        getCodes(root, "", new StringBuffer());
+        getCodes(root, "", new StringBuilder());
         return codeTable;
     }
 
@@ -248,12 +272,12 @@ public class HuffmanCode {
      * @param code 路径 左子结点是0 右子结点是1
      * @param sb
      */
-    private void getCodes(TreeNode node, String code, StringBuffer sb) {
+    private void getCodes(TreeNode node, String code, StringBuilder sb) {
         if (node == null) {
             return;
         }
         // 用一个新的sbb变量，是为了保存父结点的路径
-        StringBuffer sbb = new StringBuffer(sb);
+        StringBuilder sbb = new StringBuilder(sb);
         sbb.append(code);
         // 判断是否是叶子结点，假如是叶子结点，需要将这个结点和路径放到Map里
         if (node.getLeft() == null && node.getRight() == null) {
@@ -275,7 +299,7 @@ public class HuffmanCode {
         }
 
         // 遍历原始bytes数组去查询 编码表
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (byte data : bytes) {
             sb.append(codeTable.get(data));
         }
@@ -289,7 +313,7 @@ public class HuffmanCode {
         } else {
             len = sb.length() / 8 + 1;
         }
-        byte[] newBytes = new byte[len];
+        byte[] newBytes = new byte[len + 1]; // 为什么加1呢? 是为了保存最后一位的字节的 二进制位数
         // 将字节码每8位转为byte
         int index = 0;
         for (int i = 0; i < sb.length(); i += 8) {
@@ -301,7 +325,63 @@ public class HuffmanCode {
             }
             newBytes[index++] = (byte) Integer.parseInt(singleByte, 2);
         }
+        newBytes[index] = (byte)(sb.length() % 8) ; // 保存最后一位的字节的 二进制位数
         return newBytes;
+    }
+
+    /**
+     * 压缩文件
+     *
+     * @param srcFile 源文件路径
+     * @param dstFile 压缩文件存放路径
+     */
+    public void zipFile(String srcFile, String dstFile) {
+        try (
+            InputStream is = new FileInputStream(srcFile);
+            FileOutputStream os = new FileOutputStream(dstFile); // 创建字节输出流
+            ObjectOutputStream oos = new ObjectOutputStream(os)
+        ) {
+            // 创建一个byte数组，存放待压缩文件的字节
+            byte[] bytes = new byte[is.available()];
+            System.out.println("原始字节数组长度：" + bytes.length);
+            // 读取源文件数据
+            is.read(bytes);
+            // 对源文件进行哈夫曼编码的压缩
+            byte[] zipBytes = zip(bytes);
+            System.out.println("压缩字节数组长度：" + bytes.length);
+            // 使用对象输出流,将压缩后的字节数组和对应的哈夫曼编码表保存起来
+            // 哈夫曼编码表是为了后续解压缩使用的
+            oos.writeObject(zipBytes);
+            oos.writeObject(codeTable);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 解压文件
+     *
+     * @param srcFile 压缩源文件路径
+     * @param dstFile 解压存放路径
+     */
+    public void unZipFile(String srcFile, String dstFile) {
+        try (
+            InputStream is = new FileInputStream(srcFile);
+            ObjectInputStream ois = new ObjectInputStream(is);
+            FileOutputStream os = new FileOutputStream(dstFile) // 创建字节输出流
+        ) {
+            // 读取压缩源文件
+            byte[] bytes = (byte[]) ois.readObject();
+            // 读取压缩文件的哈夫曼编码
+            Map<Byte, String> codeTable = (Map<Byte, String>) ois.readObject();
+            // 解压缩文件
+            byte[] dstBytes = decode(codeTable, bytes);
+            // 将解压的字节码存放到新的路径
+            os.write(dstBytes);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public TreeNode getRoot() {
