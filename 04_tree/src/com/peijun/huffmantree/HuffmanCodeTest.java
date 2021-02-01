@@ -13,8 +13,8 @@ import java.util.Arrays;
 public class HuffmanCodeTest {
 
     public static void main(String[] args) {
-//        String sentence = "huang gang jvav";
-        String sentence = "i like like like java do you like a java";
+        String sentence = "huang gang jvav";
+//        String sentence = "i like like like java do you like a java";
 
         HuffmanCode huffmanCode = new HuffmanCode();
         byte[] zip = huffmanCode.zip(sentence.getBytes());
@@ -22,6 +22,10 @@ public class HuffmanCodeTest {
 
         byte[] decode = huffmanCode.decode(huffmanCode.getCodeTable(), zip);
 
+//        String str = huffmanCode.unZip(zip);
+
         System.out.println(new String(decode));
+
+//        System.out.println(str);
     }
 }

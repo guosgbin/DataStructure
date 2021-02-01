@@ -88,12 +88,12 @@ public class HuffmanCode {
     /**
      * 使用哈夫曼编码 字符串进行  解缩
      */
-//    public String unZip(byte[] bytes) {
-//        // 1.将byte[]数组转换为二进制字节码字符串
-//
-//        // 2.按照编码表进行解压
-//
-//    }
+    public String unZip(byte[] bytes) {
+        // 1.将byte[]数组转换为二进制字节码字符串
+        String str = byteToBitString2(bytes);
+        // 2.按照编码表进行解压
+        return decode2(str, codeTable);
+    }
 
     /**
      * @param codeTable    编码表
@@ -111,9 +111,7 @@ public class HuffmanCode {
         // 将压缩后的二进制字节码 按照 编码表反向 获取其对应的key
         // 首先将编码表的key-value转换， 也就是key->value, value->key
         Map<String, Byte> newCodeTable = new HashMap<>();
-        codeTable.forEach((k, v) -> {
-            newCodeTable.put(v, k);
-        });
+        codeTable.forEach((k, v) -> newCodeTable.put(v, k));
         // 查表 将压缩后的字节码转换为对应的字符
         List<Byte> list = new ArrayList<>();
         for (int i = 0; i < sb.length(); ) {
@@ -138,11 +136,79 @@ public class HuffmanCode {
         return bytes;
     }
 
+    //将二进制字符串解码
+    // TODO 看看是否有汲取的必要
+    public String decode2(String hashCode, Map<Byte,String> codeMap){
+        //先将编码表的key value反过来，变成解码表
+        Map<String, Byte> decodingMap = new HashMap<>();
+        for (Map.Entry<Byte, String> entry : codeMap.entrySet()) {
+            decodingMap.put(entry.getValue(), entry.getKey());
+        }
+        //存放每个符号的ASCII码值
+        List<Byte> byteList = new ArrayList<>();
+        //用来表示开始对比的首位1,或0的下标，循环中的i为subString截取的最后一个0、1，它后面一位的下标。
+        int start = 0;
+        for (int i = 0; i < hashCode.length(); i++) {
+            //遍历传入的二进制hashCode字符串，与解码表对比，得到一个字符，就加入到集合中
+            String substring = hashCode.substring(start, i);
+            if (decodingMap.get(substring) != null){
+                //表示在解码表中有此字符
+                byteList.add(decodingMap.get(substring));
+                //让start=i，重新开始对比扫描
+                start = i;
+            } else if (i == hashCode.length()-1 ){
+                //因为subString是左闭右开，在最后一段的时候会少截一个字符，所以需要判断一下，i是否到达最后一个字符
+                substring = hashCode.substring(start);
+                byteList.add(decodingMap.get(substring));
+            }
+        }
+        //将集合中的byte取出，放入数组，方便转换成字符串
+        byte[] decodingBytes = new byte[byteList.size()];
+        for (int i = 0; i < decodingBytes.length; i++) {
+            //遍历集合，放入数组
+            decodingBytes[i] = byteList.get(i);
+        }
+        //将数组中的byte依照ASCII码表转换成字符串
+        String decodingStr = new String(decodingBytes);
+        return decodingStr;
+    }
+
 
     /**
      * 将byte字节转换为字节码字符串
      *
-     * @param flag
+     * @return
+     */
+    public String byteToBitString2(byte[] bytes) {
+        String string; // 表示将byte转换成的String字符串
+        String substring; // 因为负数转换成二进制补码的时候是32位，系统会自动用1补全前面的位数，所以需要截取字符串
+        StringBuilder stringBuilder = new StringBuilder(); // 用来拼接转换后的字符串
+        for (int i = 0; i < bytes.length; i++) {
+            // 如果是正数，会不足八位，需要用0填充，所以使用 按位或 256运算，256的二进制位100000000，后面是8个0.
+            if (bytes[i] >= 0 && i < bytes.length - 1) {
+                int temp = bytes[i] | 256;
+                string = Integer.toBinaryString(temp);
+                // 按位或运算以后，是首位为1的9位二进制数，所以需要截取后八位
+                substring = string.substring(string.length() - 8);
+            } else if (bytes[i] >= 0 && i == bytes.length - 1) {
+                // 表示是最后一串正数二进制，在压缩的时候可能是不足八位的，所以无需补位。
+                substring = Integer.toBinaryString(bytes[i]);
+            } else {
+                // 表示是负数，截取后八位即可
+                string = Integer.toBinaryString(bytes[i]);
+                substring = string.substring(string.length() - 8);
+            }
+            // 拼接截取后的字符串
+            stringBuilder.append(substring);
+        }
+        return stringBuilder.toString();
+    }
+
+
+    /**
+     * 将byte字节转换为字节码字符串
+     *
+     * @param flag true表示不是最后一个字节 false表示是最后一个字节
      * @param b
      * @return
      */
@@ -151,6 +217,8 @@ public class HuffmanCode {
         if (flag) {
             // 如果是最后一个字节无需补高位
             // 比如最后一个 字节是 28 -> 11100 此时就不能补高位了 假如补高位 就变成 00011100了
+
+            // 末尾是 4 -> 100 , 但是有可能是 0100 也可能是00100,说不清楚,所以需要判断最后一位是几位二进制
             temp |= 256; // 或操作 1 0000 0000
         }
         String str = Integer.toBinaryString(temp);
