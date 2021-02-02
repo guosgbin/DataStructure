@@ -19,58 +19,9 @@ public class HuffmanCode {
     private TreeNode root;
 
     /**
-     * 获取每个字符和其权值(出现次数)的结点列表
-     *
-     * @param bytes
-     */
-    private PriorityQueue<TreeNode> getNodeList(byte[] bytes) {
-        if (bytes == null) {
-            return null;
-        }
-
-        PriorityQueue<TreeNode> queue = new PriorityQueue<>();
-        // 保存字符和出现次数的map
-        Map<Byte, Integer> map = new HashMap<>();
-        for (byte data : bytes) {
-            // 假如不存在此key,存一个此key且值为1
-            // 假如存在此key,旧值和新值相加即可
-            map.merge(data, 1, Integer::sum); // 添加到Map,JDK8的Map新方法
-        }
-        // 转换为结点
-        map.forEach((key, value) -> {
-//            byte[] bytes1 = new byte[1];
-//            bytes1[0] = key;
-//            System.out.println(new String(bytes1) + "=====" + value);
-            queue.offer(new TreeNode(value, key));
-        });
-//        System.out.println(map.size());
-        return queue;
-    }
-
-    /**
-     * 构建哈夫曼树
-     *
-     * @param nodeQueue
-     */
-    private void buildHuffmanTree(PriorityQueue<TreeNode> nodeQueue) {
-        while (nodeQueue.size() > 1) {
-            TreeNode left = nodeQueue.poll();
-            TreeNode right = nodeQueue.poll();
-            TreeNode father = new TreeNode(left.weight + right.weight, null);
-            father.left = left;
-            father.right = right;
-            nodeQueue.offer(father);
-        }
-        root = nodeQueue.poll();
-    }
-
-    /* ------------------
-
-    /**
      * 哈夫曼编码表
      */
     private Map<Byte, String> codeTable = new HashMap<>();
-
 
     /**
      * 使用哈夫曼编码对 字符串进行压缩
@@ -87,171 +38,44 @@ public class HuffmanCode {
     }
 
     /**
-     * 使用哈夫曼编码 字符串进行  解缩
-     */
-    public String unZip(byte[] bytes) {
-        // 1.将byte[]数组转换为二进制字节码字符串
-        String str = byteToBitString2(bytes);
-        // 2.按照编码表进行解压
-        return decode2(str, codeTable);
-    }
-
-    /**
-     * @param codeTable    编码表
-     * @param huffmanBytes 哈夫曼编码得到的字节数组 也就是压缩后的字节数组
-     * @return 返回原始的字节数组
-     */
-    public byte[] decode(Map<Byte, String> codeTable, byte[] huffmanBytes) {
-        StringBuilder sb = new StringBuilder();
-        // 把压缩后的byte[]数组转换为压缩后的二进制字节码 字符串
-        for (int i = 0; i < huffmanBytes.length - 1; i++) {
-            byte abyte = huffmanBytes[i];
-            //对于byte中的元素，只要不是倒数第2个和倒数第一个就正常处理
-            if(i != huffmanBytes.length -2){
-                //正常处理
-                sb.append(byteToBitStr(abyte, 8));
-            }else{
-                sb.append(byteToBitStr(abyte, (int)huffmanBytes[huffmanBytes.length -1]));
-            }
-//            boolean flag = (i != huffmanBytes.length - 1);
-//            sb.append(byteToBitString(flag, abyte));
-        }
-        // 将压缩后的二进制字节码 按照 编码表反向 获取其对应的key
-        // 首先将编码表的key-value转换， 也就是key->value, value->key
-        Map<String, Byte> newCodeTable = new HashMap<>();
-        codeTable.forEach((k, v) -> newCodeTable.put(v, k));
-        // 查表 将压缩后的字节码转换为对应的字符
-        List<Byte> list = new ArrayList<>();
-        for (int i = 0; i < sb.length(); ) {
-            int count = 1; // 指针，指向新的字符编码的第一个字节位置
-            Byte aByte = null;
-            while (true) {
-                String key = sb.substring(i, i + count);
-                aByte = newCodeTable.get(key);
-                if (aByte != null) {
-                    break;
-                }
-                count ++;
-            }
-            list.add(aByte);
-            i += count; // 直接指向新的位置
-        }
-
-        byte[] bytes = new byte[list.size()];
-        for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = list.get(i);
-        }
-        return bytes;
-    }
-
-    private String byteToBitStr(byte abyte) {
-        int temp = abyte;
-
-        temp |= 256;//与256按位或，就是在前面补0
-        String str = Integer.toBinaryString(temp);
-        return str.substring(str.length()-8);
-    }
-
-    //将输入的byte转化为二进制，不一定是8位，位数取决于b2
-    private String byteToBitStr(byte b, int b2){
-        int temp = b;
-        temp |= 256;//与256按位或，在前面补齐0
-        String str = Integer.toBinaryString(temp);
-        return str.substring(str.length()-b2);
-    }
-
-    //将二进制字符串解码
-    // TODO 看看是否有汲取的必要
-    public String decode2(String hashCode, Map<Byte,String> codeMap){
-        //先将编码表的key value反过来，变成解码表
-        Map<String, Byte> decodingMap = new HashMap<>();
-        for (Map.Entry<Byte, String> entry : codeMap.entrySet()) {
-            decodingMap.put(entry.getValue(), entry.getKey());
-        }
-        //存放每个符号的ASCII码值
-        List<Byte> byteList = new ArrayList<>();
-        //用来表示开始对比的首位1,或0的下标，循环中的i为subString截取的最后一个0、1，它后面一位的下标。
-        int start = 0;
-        for (int i = 0; i < hashCode.length(); i++) {
-            //遍历传入的二进制hashCode字符串，与解码表对比，得到一个字符，就加入到集合中
-            String substring = hashCode.substring(start, i);
-            if (decodingMap.get(substring) != null){
-                //表示在解码表中有此字符
-                byteList.add(decodingMap.get(substring));
-                //让start=i，重新开始对比扫描
-                start = i;
-            } else if (i == hashCode.length()-1 ){
-                //因为subString是左闭右开，在最后一段的时候会少截一个字符，所以需要判断一下，i是否到达最后一个字符
-                substring = hashCode.substring(start);
-                byteList.add(decodingMap.get(substring));
-            }
-        }
-        //将集合中的byte取出，放入数组，方便转换成字符串
-        byte[] decodingBytes = new byte[byteList.size()];
-        for (int i = 0; i < decodingBytes.length; i++) {
-            //遍历集合，放入数组
-            decodingBytes[i] = byteList.get(i);
-        }
-        //将数组中的byte依照ASCII码表转换成字符串
-        String decodingStr = new String(decodingBytes);
-        return decodingStr;
-    }
-
-
-    /**
-     * 将byte字节转换为字节码字符串
+     * 获取每个字符和其权值(出现次数)的结点列表
      *
-     * @return
+     * @param bytes 待转换的字节数组
      */
-    public String byteToBitString2(byte[] bytes) {
-        String string; // 表示将byte转换成的String字符串
-        String substring; // 因为负数转换成二进制补码的时候是32位，系统会自动用1补全前面的位数，所以需要截取字符串
-        StringBuilder stringBuilder = new StringBuilder(); // 用来拼接转换后的字符串
-        for (int i = 0; i < bytes.length; i++) {
-            // 如果是正数，会不足八位，需要用0填充，所以使用 按位或 256运算，256的二进制位100000000，后面是8个0.
-            if (bytes[i] >= 0 && i < bytes.length - 1) {
-                int temp = bytes[i] | 256;
-                string = Integer.toBinaryString(temp);
-                // 按位或运算以后，是首位为1的9位二进制数，所以需要截取后八位
-                substring = string.substring(string.length() - 8);
-            } else if (bytes[i] >= 0 && i == bytes.length - 1) {
-                // 表示是最后一串正数二进制，在压缩的时候可能是不足八位的，所以无需补位。
-                substring = Integer.toBinaryString(bytes[i]);
-            } else {
-                // 表示是负数，截取后八位即可
-                string = Integer.toBinaryString(bytes[i]);
-                substring = string.substring(string.length() - 8);
-            }
-            // 拼接截取后的字符串
-            stringBuilder.append(substring);
+    private PriorityQueue<TreeNode> getNodeList(byte[] bytes) {
+        if (bytes == null) {
+            return null;
         }
-        return stringBuilder.toString();
+        PriorityQueue<TreeNode> queue = new PriorityQueue<>();
+        // 保存字符和出现次数的map
+        Map<Byte, Integer> map = new HashMap<>();
+        for (byte data : bytes) {
+            // 假如不存在此key,存一个此key且值为1
+            // 假如存在此key,旧值和新值相加即可
+            map.merge(data, 1, Integer::sum); // 添加到Map,JDK8的Map新方法
+        }
+        // 转换为结点
+        map.forEach((key, value) -> {
+            queue.offer(new TreeNode(value, key));
+        });
+        return queue;
     }
 
-
     /**
-     * 将byte字节转换为字节码字符串
+     * 构建哈夫曼树
      *
-     * @param flag true表示不是最后一个字节 false表示是最后一个字节
-     * @param b
-     * @return
+     * @param nodeQueue 每个字符和其权值(出现次数)的结点列表
      */
-    public String byteToBitString(boolean flag, byte b) {
-        int temp = b; // byte转为int
-        if (flag) {
-            // 如果是最后一个字节无需补高位
-            // 比如最后一个 字节是 28 -> 11100 此时就不能补高位了 假如补高位 就变成 00011100了
-
-            // 末尾是 4 -> 100 , 但是有可能是 0100 也可能是00100,说不清楚,所以需要判断最后一位是几位二进制
-            temp |= 256; // 或操作 1 0000 0000
+    private void buildHuffmanTree(PriorityQueue<TreeNode> nodeQueue) {
+        while (nodeQueue.size() > 1) {
+            TreeNode left = nodeQueue.poll();
+            TreeNode right = nodeQueue.poll();
+            TreeNode father = new TreeNode(left.weight + right.weight, null);
+            father.left = left;
+            father.right = right;
+            nodeQueue.offer(father);
         }
-        String str = Integer.toBinaryString(temp);
-        if (flag) {
-            // 假如末位大于8个字节
-            return str.substring(str.length() - 8);
-        }
-        // 末位小于8个字节，直接返回
-        return str;
+        root = nodeQueue.poll();
     }
 
     /**
@@ -270,7 +94,7 @@ public class HuffmanCode {
      *
      * @param node
      * @param code 路径 左子结点是0 右子结点是1
-     * @param sb
+     * @param sb 存储
      */
     private void getCodes(TreeNode node, String code, StringBuilder sb) {
         if (node == null) {
@@ -285,8 +109,8 @@ public class HuffmanCode {
             codeTable.put(node.getData(), sbb.toString());
         } else {
             // 不是叶子结点，递归左子树和右子树
-            getCodes(node.getLeft(), "0", sbb);
-            getCodes(node.getRight(), "1", sbb);
+            getCodes(node.getLeft(), "0", sbb); // 左子树，路径0
+            getCodes(node.getRight(), "1", sbb); // 右子树，路径1
         }
     }
 
@@ -327,6 +151,67 @@ public class HuffmanCode {
         }
         newBytes[index] = (byte)(sb.length() % 8) ; // 保存最后一位的字节的 二进制位数
         return newBytes;
+    }
+
+    /**
+     * 使用哈夫曼编码字符串进行解压缩
+     *
+     * @param codeTable    编码表
+     * @param huffmanBytes 哈夫曼编码得到的字节数组 也就是压缩后的字节数组
+     * @return 返回原始的字节数组
+     */
+    public byte[] unZip(Map<Byte, String> codeTable, byte[] huffmanBytes) {
+        StringBuilder sb = new StringBuilder();
+        // 把压缩后的byte[]数组转换为压缩后的二进制字节码 字符串
+        for (int i = 0; i < huffmanBytes.length - 1; i++) {
+            byte abyte = huffmanBytes[i];
+            //对于byte中的元素，只要不是倒数第2个和倒数第一个就正常处理
+            if(i != huffmanBytes.length -2){
+                //正常处理
+                sb.append(byteToBitStr(abyte, 8));
+            }else{
+                sb.append(byteToBitStr(abyte, (int)huffmanBytes[huffmanBytes.length -1]));
+            }
+        }
+        // 将压缩后的二进制字节码 按照 编码表反向 获取其对应的key
+        // 首先将编码表的key-value转换， 也就是key->value, value->key
+        Map<String, Byte> newCodeTable = new HashMap<>();
+        codeTable.forEach((k, v) -> newCodeTable.put(v, k));
+        // 查表 将压缩后的字节码转换为对应的字符
+        List<Byte> list = new ArrayList<>();
+        for (int i = 0; i < sb.length(); ) {
+            int count = 1; // 指针，指向新的字符编码的第一个字节位置
+            Byte aByte = null;
+            while (true) {
+                String key = sb.substring(i, i + count);
+                aByte = newCodeTable.get(key);
+                if (aByte != null) {
+                    break;
+                }
+                count ++;
+            }
+            list.add(aByte);
+            i += count; // 直接指向新的位置
+        }
+
+        byte[] bytes = new byte[list.size()];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = list.get(i);
+        }
+        return bytes;
+    }
+
+    /**
+     * 将输入的byte转化为二进制，不一定是8位，位数取决于count
+     * @param b 待转换为二进制的字节
+     * @param count 待截取的位数
+     * @return
+     */
+    private String byteToBitStr(byte b, int count) {
+        int temp = b;
+        temp |= 256;//与256按位或，在前面补齐0
+        String str = Integer.toBinaryString(temp);
+        return str.substring(str.length() - count);
     }
 
     /**
@@ -375,7 +260,7 @@ public class HuffmanCode {
             // 读取压缩文件的哈夫曼编码
             Map<Byte, String> codeTable = (Map<Byte, String>) ois.readObject();
             // 解压缩文件
-            byte[] dstBytes = decode(codeTable, bytes);
+            byte[] dstBytes = unZip(codeTable, bytes);
             // 将解压的字节码存放到新的路径
             os.write(dstBytes);
         } catch (IOException | ClassNotFoundException e) {

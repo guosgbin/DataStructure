@@ -42,7 +42,7 @@ public class HuffmanCodeTest {
         byte[] zip = huffmanCode.zip(sentence.getBytes());
         System.out.println(Arrays.toString(zip));
 
-        byte[] decode = huffmanCode.decode(huffmanCode.getCodeTable(), zip);
+        byte[] decode = huffmanCode.unZip(huffmanCode.getCodeTable(), zip);
 
 //        String str = huffmanCode.unZip(zip);
 
