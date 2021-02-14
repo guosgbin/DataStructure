@@ -1,5 +1,6 @@
 package com.peijun.test.tree;
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -13,13 +14,26 @@ import java.util.*;
 public class HuffmanCode {
 
     public static void main(String[] args) {
-        String testStr = "huang gang jvav";
-        HuffmanCode huffmanCode = new HuffmanCode();
-        byte[] bytes = huffmanCode.zipStr(testStr.getBytes());
-        System.out.println(Arrays.toString(bytes));
+//        String testStr = "huang gang jvav";
+//        HuffmanCode huffmanCode = new HuffmanCode();
+//        byte[] bytes = huffmanCode.zip(testStr.getBytes());
+//        System.out.println(Arrays.toString(bytes));
+//
+//        byte[] bytes1 = huffmanCode.unZip(huffmanCode.codeTable, bytes);
+//        System.out.println(new String(bytes1));
 
-        byte[] bytes1 = huffmanCode.unZipStr(huffmanCode.codeTable, bytes);
-        System.out.println(new String(bytes1));
+        // 压缩文件测试
+//        String src = "E:\\笔记\\笔记模块\\笔记模块\\GitHub开始\\数据结构和算法\\数据结构_014_哈夫曼编码\\压缩使用文件\\picture.png";
+//        String dst = "E:\\笔记\\笔记模块\\笔记模块\\GitHub开始\\数据结构和算法\\数据结构_014_哈夫曼编码\\压缩使用文件\\pictureZip.zip";
+//        HuffmanCode huffmanCode = new HuffmanCode();
+//        huffmanCode.zipFile(src, dst);
+//        System.out.println("压缩完成...");
+        // 解压文件测试
+        String src = "E:\\笔记\\笔记模块\\笔记模块\\GitHub开始\\数据结构和算法\\数据结构_014_哈夫曼编码\\压缩使用文件\\pictureZip.zip";
+        String dst = "E:\\笔记\\笔记模块\\笔记模块\\GitHub开始\\数据结构和算法\\数据结构_014_哈夫曼编码\\压缩使用文件\\jieya.png";
+        HuffmanCode huffmanCode = new HuffmanCode();
+        huffmanCode.unZipFile(src, dst);
+        System.out.println("解压完成...");
     }
 
     /**
@@ -41,7 +55,7 @@ public class HuffmanCode {
     /**
      * 压缩字符串
      */
-    public byte[] zipStr(byte[] bytes) {
+    public byte[] zip(byte[] bytes) {
         if (bytes == null) {
             return null;
         }
@@ -58,7 +72,7 @@ public class HuffmanCode {
     /**
      * 解压字符串
      */
-    public byte[] unZipStr(Map<Byte, String> codeTable, byte[] huffmanBytes) {
+    public byte[] unZip(Map<Byte, String> codeTable, byte[] huffmanBytes) {
         // 首先将压缩后的byte数组转为二进制形式的字符串
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < huffmanBytes.length - 1; i++) {
@@ -104,6 +118,50 @@ public class HuffmanCode {
         }
         return bytes;
     }
+
+    /**
+     * 压缩文件
+     */
+    public void zipFile(String srcFile, String destFile) {
+        try (
+            InputStream is = new FileInputStream(srcFile); // 输入流
+            OutputStream os = new FileOutputStream(destFile); // 输出流
+            ObjectOutputStream oos = new ObjectOutputStream(os)
+        ) {
+            // 首先读取文件，转为字节数组
+            byte[] bytes = new byte[is.available()];
+            is.read(bytes);
+            // 压缩
+            byte[] zipBytes = zip(bytes);
+            // 写到对象流
+            oos.writeObject(zipBytes);
+            oos.writeObject(codeTable);
+        } catch (IOException e) {
+
+        }
+    }
+
+    /**
+     * 解压文件
+     */
+    public void unZipFile(String srcFile, String destFile) {
+        try (
+            InputStream is = new FileInputStream(srcFile); // 输入流
+            OutputStream os = new FileOutputStream(destFile); // 输出流
+            ObjectInputStream ois = new ObjectInputStream(is)
+        ) {
+            // 读取对象流
+            byte[] zipBytes = (byte[]) ois.readObject();
+            Map<Byte, String> codeTable = (Map<Byte, String>) ois.readObject();
+            // 解压
+            byte[] bytes = unZip(codeTable, zipBytes);
+            // 输出到指定位置
+            os.write(bytes);
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 
     /**
      * 初始化字符串的各个字符对应的权重

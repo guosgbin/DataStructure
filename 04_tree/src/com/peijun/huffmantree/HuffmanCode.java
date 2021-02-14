@@ -239,7 +239,7 @@ public class HuffmanCode {
             oos.writeObject(zipBytes);
             oos.writeObject(codeTable);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -264,9 +264,8 @@ public class HuffmanCode {
             // 将解压的字节码存放到新的路径
             os.write(dstBytes);
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-
     }
 
     public TreeNode getRoot() {
