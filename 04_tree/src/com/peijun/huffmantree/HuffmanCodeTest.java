@@ -13,8 +13,8 @@ import java.util.Arrays;
 public class HuffmanCodeTest {
 
     public static void main(String[] args) {
-//        testString();
-        testZip();
+        testString();
+//        testZip();
     }
 
     private static void testZip() {
@@ -35,8 +35,8 @@ public class HuffmanCodeTest {
 
 
     private static void testString() {
-//        String sentence = "huang gang jvav";
-        String sentence = "i like like like java do you like a java";
+        String sentence = "huang gang jvav";
+//        String sentence = "i like like like java do you like a java";
 
         HuffmanCode huffmanCode = new HuffmanCode();
         byte[] zip = huffmanCode.zip(sentence.getBytes());
