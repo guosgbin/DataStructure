@@ -17,6 +17,9 @@ public class HuffmanCode {
         HuffmanCode huffmanCode = new HuffmanCode();
         byte[] bytes = huffmanCode.zipStr(testStr.getBytes());
         System.out.println(Arrays.toString(bytes));
+
+        byte[] bytes1 = huffmanCode.unZipStr(huffmanCode.codeTable, bytes);
+        System.out.println(new String(bytes1));
     }
 
     /**
@@ -50,6 +53,56 @@ public class HuffmanCode {
         Map<Byte, String> codeTable = getCodeTable(root);
         // 4.根据哈夫曼编码表将原始字符串变为一个二进制编码，按照8位 得到新的byte数组
         return zipToByteArray(bytes, codeTable);
+    }
+
+    /**
+     * 解压字符串
+     */
+    public byte[] unZipStr(Map<Byte, String> codeTable, byte[] huffmanBytes) {
+        // 首先将压缩后的byte数组转为二进制形式的字符串
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < huffmanBytes.length - 1; i++) {
+            byte huffmanByte = huffmanBytes[i]; // 取出数据
+            if (i != huffmanBytes.length - 2) {
+                // 正常处理
+                sb.append(byteToBitStr(huffmanByte, 8)); // 8位
+            } else {
+                // 当前是压缩后的字节数组的倒数第二个数，需要结合倒数第一个数一起
+                int count = huffmanBytes[huffmanBytes.length - 1];
+                sb.append(byteToBitStr(huffmanByte, count)); // count位
+            }
+        }
+
+        // 将哈夫曼编码转换为key为value，value为key的新map
+        Map<String, Byte> newCodeTable = new HashMap<>();
+        codeTable.forEach((key, value) -> {
+            newCodeTable.put(value, key);
+        });
+
+        // 对照逆哈夫曼编码表找出编码对应的 原始字符
+        int index = 0;
+        List<Byte> byteList = new ArrayList<>();
+        while (index < sb.length()) {
+            int count = 1;
+            Byte aByte = null;
+            while (true) {
+                aByte = newCodeTable.get(sb.substring(index, index + count));
+                if (aByte == null) {
+                    count++;
+                } else {
+                    break;
+                }
+            }
+            index += count;
+            byteList.add(aByte);
+        }
+
+        // 集合转为字节数组
+        byte[] bytes = new byte[byteList.size()];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = byteList.get(i);
+        }
+        return bytes;
     }
 
     /**
@@ -153,6 +206,20 @@ public class HuffmanCode {
         }
         newBytes[index] = (byte) (sb.length() % 8); // 记录末尾不足8位的 位数
         return newBytes;
+    }
+
+    /**
+     * 字节转换为二进制形式字符串
+     * @param aByte
+     * @param count 末尾个数
+     * @return
+     */
+    private String byteToBitStr(byte aByte, Integer count) {
+        int temp = aByte;
+        temp |= 256;//与256按位或，在前面补齐0
+        String str = Integer.toBinaryString(temp);
+        return str.substring(str.length() - count);
+
     }
 
     class TreeNode implements Comparable<TreeNode> {
